@@ -40,7 +40,7 @@
   });
 </script>
 
-<div class="nav-item dropdown">
+<li class="nav-item dropdown">
   <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
     {selected.name}
   </button>
@@ -58,4 +58,4 @@
       </li>
     {/each}
   </ul>
-</div>
+</li>
