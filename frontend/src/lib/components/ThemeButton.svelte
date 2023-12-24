@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   interface ThemeOption {
     name: string;
     set(): void;
@@ -29,15 +31,31 @@
         lightMode.set();
       }
     },
-  }
+  };
+
+  let selected: ThemeOption = autoMode;
+
+  onMount(() => {
+    selected.set();
+  });
 </script>
 
 <div class="nav-item dropdown">
   <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-    <ul class="dropdown-menu show">
-      {#each [lightMode, darkMode, autoMode] as opt}
-        <li><button class="dropdown-item" type="button" on:click={opt.set}>{opt.name}</button></li>
-      {/each}
-    </ul>
+    {selected.name}
   </button>
+  <ul class="dropdown-menu">
+    {#each [lightMode, darkMode, autoMode] as opt}
+      <li>
+        <button
+          class="dropdown-item"
+          type="button"
+          on:click={() => {
+            selected = opt;
+            selected.set();
+          }}>{opt.name}</button
+        >
+      </li>
+    {/each}
+  </ul>
 </div>
