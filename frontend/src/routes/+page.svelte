@@ -1,2 +1,7 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+  import Logo from "$lib/components/Logo.svelte";
+</script>
+
+<Logo />
+<a href="book" class="btn btn-primary" role="button">Fazer uma reserva</a>
+<a href="history" class="btn btn-secondary" role="button">Suas reservas</a>
