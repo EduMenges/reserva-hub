@@ -1,6 +1,15 @@
 <script lang="ts">
-  import ThemeButton from "$lib/components/ThemeButton.svelte";
+  import { onMount } from "svelte";
   import "../app.scss";
+  import { browser } from "$app/environment";
+
+  onMount(async () => {
+    if (!browser) return;
+
+    await import("bootstrap");
+  });
+
+  import ThemeButton from "$lib/components/ThemeButton.svelte";
   import { page } from "$app/stores";
 
   type Route = {
@@ -11,7 +20,7 @@
   const routes: Route[] = [{ url: "/login", display: "Login" }];
 </script>
 
-<nav class="navbar container">
+<nav class="navbar container navbar-expand-lg">
   <a href="/" class="navbar-brand">Início</a>
   <button
     class="navbar-toggler"
@@ -24,15 +33,15 @@
   >
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav flex-wrap flex-row">
+  <div class="collapse navbar-collapse d-flex flex-row flex-wrap justify-content-between" id="navbarSupportedContent">
+    <ul class="navbar-nav">
       {#each routes as route}
         <li class="nav-item">
           <a href={route.url} class="nav-link" class:active={$page.route.id == route.url}>{route.display}</a>
         </li>
       {/each}
     </ul>
-    <ul class="navbar-nav flex-wrap flex-row">
+    <ul class="navbar-nav">
       <ThemeButton />
     </ul>
   </div>

@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
+  import { onMount } from "svelte"; 
   interface ThemeOption {
-    name: string;
+    description: string;
+    icon: string;
     set(): void;
   }
 
   const lightMode: ThemeOption = {
-    name: "☀️ Claro",
+    description: "Claro",
+    icon: "sun-fill",
     set() {
       const doc = document.querySelector("html");
       doc?.setAttribute("data-bs-theme", "light");
@@ -15,7 +16,8 @@
   };
 
   const darkMode: ThemeOption = {
-    name: "🌒 Escuro",
+    description: "Escuro",
+    icon: "moon-stars-fill",
     set() {
       const doc = document.querySelector("html");
       doc?.setAttribute("data-bs-theme", "dark");
@@ -23,7 +25,8 @@
   };
 
   const autoMode: ThemeOption = {
-    name: "🌗 Automático",
+    description: "Automático",
+    icon: "circle-half",
     set() {
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         darkMode.set();
@@ -42,7 +45,8 @@
 
 <li class="nav-item dropdown">
   <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-    {selected.name}
+    <i class={`me-2 bi-${selected.icon}`}></i>
+    Tema
   </button>
   <ul class="dropdown-menu">
     {#each [lightMode, darkMode, autoMode] as opt}
@@ -53,8 +57,11 @@
           on:click={() => {
             selected = opt;
             selected.set();
-          }}>{opt.name}</button
+          }}
         >
+          <i class={`me-2 bi-${opt.icon}`}></i>
+          {opt.description}
+        </button>
       </li>
     {/each}
   </ul>
