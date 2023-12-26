@@ -1,4 +1,4 @@
-package com.reservahub.backend;
+package com.reservahub.backend.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
