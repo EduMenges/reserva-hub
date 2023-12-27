@@ -1,5 +1,6 @@
 <script lang="ts">
     import StatusColored from "$lib/components/StatusColored.svelte";
+    import { Status } from "$lib/schemas";
 import type { PageServerData } from "./$types";
     export let data: PageServerData;
 
@@ -39,7 +40,7 @@ import type { PageServerData } from "./$types";
             <StatusColored status={booking.status} />
         </td>
         <td>
-            <button class="btn btn-secondary ">Um botão</button>
+            <button class="btn btn-secondary" disabled={booking.status === Status.Canceled}>Editar</button>
         </td>
       </tr>
     {/each}</tbody>

@@ -1,4 +1,4 @@
-import { Status } from '$lib/schemas';
+import { Status, type BookingType } from '$lib/schemas';
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {
@@ -10,7 +10,15 @@ export const load = (async () => {
             room: "Anfiteatro",
             startDate: new Date(Date.now()),
             endDate: new Date(Date.now() + 100),
+        },
+            {
+                description: "",
+                name: "Festa satânica",
+                status: Status.Canceled,
+                room: "Instituto de Ciências Humanas",
+                startDate: new Date(666),
+                endDate: new Date(999999)
         }
         ]
     };
-}) satisfies PageServerLoad;
+}) satisfies PageServerLoad<{ bookings: BookingType[] }>;

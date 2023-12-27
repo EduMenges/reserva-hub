@@ -5,9 +5,9 @@
 </script>
 
 {#if status === Status.Confirmed}
-<span class="text-success-emphasis">Confirmed</span>
+<span class="text-success-emphasis">Confirmado</span>
 {:else if status === Status.Pending}
-<span class="text-warning-emphasis">Pending</span>
+<span class="text-warning-emphasis">Pendente</span>
 {:else if status === Status.Canceled}
-<span class="text-danger-emphasis">Canceled</span>
+<span class="text-danger-emphasis">Cancelado</span>
 {/if}
