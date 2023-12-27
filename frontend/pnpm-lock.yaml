@@ -17,6 +17,12 @@ dependencies:
   bootstrap-icons:
     specifier: ^1.11.2
     version: 1.11.2
+  zod:
+    specifier: ^3.22.4
+    version: 3.22.4
+  zod-class:
+    specifier: ^0.0.12
+    version: 0.0.12(zod@3.22.4)
 
 devDependencies:
   '@sveltejs/adapter-auto':
@@ -1784,6 +1790,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /type-fest@4.8.3:
+    resolution: {integrity: sha512-//BaTm14Q/gHBn09xlnKNqfI8t6bmdzx2DXYfPBNofN0WUybCEUDcbCWcTa0oF09lzLjZgPphXAsvRiMK0V6Bw==}
+    engines: {node: '>=16'}
+    dev: false
+
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
@@ -1872,3 +1883,16 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod-class@0.0.12(zod@3.22.4):
+    resolution: {integrity: sha512-o39yrrycX9i9SVUiHY18avIAwLXaUiAMtxVBwzo4Zb1XhGgxwPKGQxB44/BSBw+CjwlWXJL6kCF4AhfW5kdmKw==}
+    peerDependencies:
+      zod: ^3
+    dependencies:
+      type-fest: 4.8.3
+      zod: 3.22.4
+    dev: false
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: false
