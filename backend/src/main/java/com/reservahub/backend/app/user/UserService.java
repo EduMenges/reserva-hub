@@ -24,11 +24,11 @@ public class UserService implements UserDetailsService{
     }
 
     @Override
-    public UserDetails loadUserByUsername(String registration) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByRegistration(registration);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsername(username);
 
         return user.map(com.reservahub.backend.app.user.UserDetails::new) 
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + registration)); 
+                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username)); 
 
     }
 }
