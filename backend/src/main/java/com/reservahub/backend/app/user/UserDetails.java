@@ -17,7 +17,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
     private List<GrantedAuthority> authorities; 
   
     public UserDetails(User user) { 
-        username = user.getRegistration();
+        username = user.getUsername();
         password = user.getPassword(); 
         authorities = Arrays.stream(user.getRole().split(",")) 
                 .map(SimpleGrantedAuthority::new) 
