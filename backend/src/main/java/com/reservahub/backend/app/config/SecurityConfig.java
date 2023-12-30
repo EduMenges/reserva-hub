@@ -22,6 +22,7 @@ import com.reservahub.backend.app.user.UserService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    
     @Autowired
     private JwtAuthFilter authFilter;
 
