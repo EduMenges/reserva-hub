@@ -5,7 +5,7 @@
 <Logo />
 <p>Entre com a sua conta pessoal do INF</p>
 
-<form>
+<form method="post">
   <div class="mb-3">
     <label class="form-label" for="username">Usuário</label>
     <input id="username" class="form-control" type="text" />
@@ -15,5 +15,6 @@
     <input id="password" class="form-control" type="password" />
   </div>
 
-  <button type="submit" class="btn btn-primary">Login</button>
+  <button type="submit" class="btn btn-primary" formaction="?/login">Entrar</button>
+  <button type="submit" class="btn btn-danger" formaction="?/as_admin">Entrar como administrador</button>
 </form>
