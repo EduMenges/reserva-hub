@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { enhance } from "$app/forms";
   import type { RoomType } from "$lib/schemas";
 
   export let rooms: RoomType[] = [
@@ -21,7 +22,7 @@
 
 <h1>Escolha a sala reserva</h1>
 {#if rooms.length > 0}
-  <form action="?/allocate-room" method="post">
+  <form use:enhance action="?/allocate-room" method="post">
     <fieldset>
       <legend>Salas disponíveis</legend>
       {#each rooms as room}

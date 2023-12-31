@@ -42,6 +42,6 @@
   </Collapse>
 </Navbar>
 
-<main class="container">
+<main class="container m-auto pb-5">
   <slot />
 </main>
