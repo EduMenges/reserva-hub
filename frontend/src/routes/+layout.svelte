@@ -9,8 +9,8 @@
     await import("bootstrap");
   });
 
+  import { Collapse, NavItem, Nav, NavLink, Navbar, NavbarBrand, NavbarToggler } from "@sveltestrap/sveltestrap";
   import ThemeButton from "$lib/components/ThemeButton.svelte";
-  import { page } from "$app/stores";
 
   type Route = {
     url: string;
@@ -18,34 +18,26 @@
   };
 
   const routes: Route[] = [{ url: "/login", display: "Login" }];
+
+  let isOpen = false;
 </script>
 
-<nav class="navbar container navbar-expand-lg">
-  <a href="/" class="navbar-brand">Início</a>
-  <button
-    class="navbar-toggler"
-    type="button"
-    data-bs-toggle="collapse"
-    data-bs-target="#navbarSupportedContent"
-    aria-controls="navbarSupportedContent"
-    aria-expanded="false"
-    aria-label="Toggle navigation"
-  >
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse d-flex flex-row flex-wrap justify-content-between" id="navbarSupportedContent">
-    <ul class="navbar-nav">
+<Navbar expand="sm" sticky="top">
+  <NavbarBrand href="/">Início</NavbarBrand>
+  <NavbarToggler on:click={() => (isOpen = !isOpen)} />
+  <Collapse navbar expand="sm" {isOpen} class="justify-content-between">
+    <Nav navbar>
       {#each routes as route}
-        <li class="nav-item">
-          <a href={route.url} class="nav-link" class:active={$page.route.id == route.url}>{route.display}</a>
-        </li>
+        <NavItem>
+          <NavLink href={route.url}>{route.display}</NavLink>
+        </NavItem>
       {/each}
-    </ul>
-    <ul class="navbar-nav">
+    </Nav>
+    <Nav navbar>
       <ThemeButton />
-    </ul>
-  </div>
-</nav>
+    </Nav>
+  </Collapse>
+</Navbar>
 
 <main class="container">
   <slot />
