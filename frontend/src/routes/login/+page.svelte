@@ -5,10 +5,11 @@
 </script>
 
 <SmallContainer>
-  <div class="text-center">
+  <header class="text-center mb-3">
     <Logo />
+    <hr />
     <p>Entre com a sua conta pessoal do INF</p>
-  </div>
+  </header>
 
   <form method="post" use:enhance>
     <div class="mb-3">
