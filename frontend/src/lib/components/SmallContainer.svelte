@@ -13,6 +13,6 @@
   @import "../../variables.scss";
 
   section {
-    max-width: map-get($grid-breakpoints, sm) * 0.65;
+    max-width: map-get($grid-breakpoints, sm) * 0.70;
   }
 </style>
