@@ -11,6 +11,7 @@
 
   import { Collapse, NavItem, Nav, NavLink, Navbar, NavbarBrand, NavbarToggler } from "@sveltestrap/sveltestrap";
   import ThemeButton from "$lib/components/ThemeButton.svelte";
+    import { autoMode, type ThemeOption } from "$lib/components/ThemeButton";
 
   type Route = {
     url: string;
@@ -20,9 +21,11 @@
   const routes: Route[] = [{ url: "/login", display: "Login" }];
 
   let isOpen = false;
+
+  let appTheme: ThemeOption = autoMode;
 </script>
 
-<Navbar expand="sm" sticky="top">
+<Navbar expand="sm" sticky="top" container="sm" color="primary" class="mb-3" >
   <NavbarBrand href="/">Início</NavbarBrand>
   <NavbarToggler on:click={() => (isOpen = !isOpen)} />
   <Collapse navbar expand="sm" {isOpen} class="justify-content-between">
@@ -34,7 +37,7 @@
       {/each}
     </Nav>
     <Nav navbar>
-      <ThemeButton />
+      <ThemeButton bind:selected={appTheme}/>
     </Nav>
   </Collapse>
 </Navbar>
