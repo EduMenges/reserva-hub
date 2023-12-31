@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte"; 
+  import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, NavItem } from "@sveltestrap/sveltestrap";
+  import { onMount } from "svelte";
   interface ThemeOption {
     description: string;
     icon: string;
@@ -43,26 +44,21 @@
   });
 </script>
 
-<li class="nav-item dropdown">
-  <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+<Dropdown nav>
+  <DropdownToggle caret>
     <i class={`me-2 bi-${selected.icon}`}></i>
     Tema
-  </button>
-  <ul class="dropdown-menu">
+  </DropdownToggle>
+  <DropdownMenu>
     {#each [lightMode, darkMode, autoMode] as opt}
-      <li>
-        <button
-          class="dropdown-item"
-          type="button"
-          on:click={() => {
-            selected = opt;
-            selected.set();
-          }}
-        >
-          <i class={`me-2 bi-${opt.icon}`}></i>
-          {opt.description}
-        </button>
-      </li>
+      <DropdownItem
+        on:click={() => {
+          selected = opt;
+          selected.set();
+        }}
+      >
+        {opt.description}
+      </DropdownItem>
     {/each}
-  </ul>
-</li>
+  </DropdownMenu>
+</Dropdown>
