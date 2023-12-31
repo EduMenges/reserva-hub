@@ -4,7 +4,11 @@
 </script>
 
 <SmallContainer>
-  <Logo class="text-center" textClass="text-danger" />
+  <header>
+    <Logo class="text-center" textClass="text-danger" />
+  </header>
+
+  <hr />
 
   <div class="d-flex justify-content-between">
     <a class="btn btn-primary" href="admin/approve" role="button">Aprovar reservas</a>
