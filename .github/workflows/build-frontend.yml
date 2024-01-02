@@ -1,0 +1,36 @@
+name: Build frontend
+
+on:
+  push:
+    paths: 
+      - "frontend/**"
+
+jobs:
+  build-frontend:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Chdir to frontend
+      run: cd frontend
+      
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2.4.0
+      with:
+        version: latest
+            
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'pnpm'
+        cache-dependency-path: frontend/pnpm-lock.yaml
+        
+    - name: Setup dependencies
+      run: cd frontend && pnpm install
+
+    - name: Build
+      run: cd frontend && pnpm build
