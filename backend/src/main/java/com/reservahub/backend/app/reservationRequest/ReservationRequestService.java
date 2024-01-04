@@ -62,8 +62,6 @@ public class ReservationRequestService {
     }
 
     private boolean roomDoesNotExist(Long roomId) {
-        System.out.println(roomId);
-
         if (roomRepository.findById(roomId).isEmpty()) {
             return true;
         }
