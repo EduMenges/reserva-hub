@@ -12,11 +12,13 @@ import lombok.Data;
 @Data
 public class UserDetails implements org.springframework.security.core.userdetails.UserDetails{
 
+    private Long id;
     private String username; 
     private String password; 
     private List<GrantedAuthority> authorities; 
   
     public UserDetails(User user) { 
+        id = user.getId();
         username = user.getUsername();
         password = user.getPassword(); 
         authorities = Arrays.stream(user.getRole().split(",")) 
