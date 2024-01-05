@@ -40,6 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                                 .requestMatchers("/user/login").permitAll()
                                 .requestMatchers("/request/send").hasAuthority("STUDENT")
+                                .requestMatchers("/history/student").hasAuthority("STUDENT")
+                                .requestMatchers("/history/teacher").hasAuthority("TEACHER")
                                 .anyRequest().authenticated()
 
                 )
