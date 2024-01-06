@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.reservahub.backend.app.room.Room;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryMapping;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryStatus;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -49,6 +53,41 @@ public class ReservationRequest {
         APPROVED,
         DENIED,
         CANCELED
+    }
+
+    public UserHistoryEntryDTO convertToUserHistoryEntry() {
+        UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
+
+        EntryMapping mapping = historyEntry.getEntryMapping();
+        mapping.setType(EntityType.RESERVATION_REQUEST);
+        mapping.setEntityId(id);
+
+        historyEntry.setEntryMapping(mapping);
+
+        historyEntry.setEventName(eventName);
+
+        switch (status) {
+            case AWAITING_APPROVAL:
+            historyEntry.setStatus(EntryStatus.AWAITING_APPROVAL);
+            break;
+            case APPROVED:
+            historyEntry.setStatus(EntryStatus.APPROVED);
+            break;
+            case DENIED:
+            historyEntry.setStatus(EntryStatus.DENIED);
+            break;
+            case CANCELED:
+            historyEntry.setStatus(EntryStatus.CANCELED);
+            break;
+        }
+
+        historyEntry.setRoomNumber(room.getRoomNumber());
+        historyEntry.setBuildingNumber(room.getBuildingNumber());
+        historyEntry.setDate(date);
+        historyEntry.setStartTime(startTime);
+        historyEntry.setEndTime(endTime);
+
+        return historyEntry;
     }
 
 }
