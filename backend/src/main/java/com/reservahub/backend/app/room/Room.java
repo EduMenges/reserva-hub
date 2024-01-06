@@ -1,6 +1,10 @@
 package com.reservahub.backend.app.room;
 
+import java.util.Set;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,12 +26,26 @@ public class Room {
     private String buildingNumber;
     @Enumerated(EnumType.STRING)
     @Column(length = 16)
-    private RoomType type;
+    private RoomEnum type;
     private Short capacity;
 
-    public enum RoomType {
+    @ElementCollection(targetClass = ResourceEnum.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "room_resources")
+    @Column(name = "room_type")
+    private Set<ResourceEnum> resources;
+
+    public enum RoomEnum {
+        AUDITORIUM,
         CLASSROOM,
-        LAB
+        LAB,
+        MEETING_ROOM
+    }
+
+    public enum ResourceEnum {
+        AC,
+        PROJECTOR,
+        PC
     }
 
 }
