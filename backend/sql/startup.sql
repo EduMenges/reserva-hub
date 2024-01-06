@@ -12,7 +12,7 @@ VALUES ('admin', '$2a$10$cRZ6dFxZTWOlgK68jm/HaOHz726q9L5Il9tS3/fkHxK.bzcROPOfu',
 
 INSERT INTO public.rooms(
 	building_number, capacity, room_number, type)
-	VALUES ('503', 31, '233', 'AUDITORIUM')
+	VALUES ('503', 31, '233', 'AUDITORIUM');
 
 INSERT INTO public.reservations (
     date, end_time, event_description, event_name, start_time, status, user_id, room_id

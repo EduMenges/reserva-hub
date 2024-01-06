@@ -1,7 +1,13 @@
 name: Build backend
 
 on:
+  pull_request:
+    paths:
+      - "backend/**"
+      
   push:
+    branches: 
+      - main
     paths: 
       - "backend/**"
 
