@@ -3,6 +3,8 @@ package com.reservahub.backend.app.reservationRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.reservahub.backend.app.room.Room;
+
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,19 +13,23 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "reservationrequests")
+@Table(name = "reservation_requests")
 public class ReservationRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long cardNumber;
-    private Long roomId;
+    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "room_id", referencedColumnName = "id")
+    private Room room;
     @Enumerated(EnumType.STRING)
     @Column(length = 32)
     private ReservationRequestStatus status;

@@ -2,113 +2,75 @@ package com.reservahub.backend.app.reservationRequest;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.reservahub.backend.app.reservation.Reservation;
+import com.reservahub.backend.app.exception.InvalidEventDurationException;
+import com.reservahub.backend.app.exception.RoomAlreadyReservedException;
 import com.reservahub.backend.app.reservation.ReservationRepository;
 import com.reservahub.backend.app.reservationRequest.ReservationRequest.ReservationRequestStatus;
+import com.reservahub.backend.app.reservationRequest.dto.ReservationRequestDto;
+import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.room.RoomRepository;
 import com.reservahub.backend.app.user.UserDetails;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class ReservationRequestService {
-    
+
     @Autowired
     private ReservationRequestRepository reservationRequestRepository;
 
     @Autowired
-    private RoomRepository roomRepository;
-
-    @Autowired
     private ReservationRepository reservationRepository;
 
-    public void emitRequest(
-            UserDetails user,
-            ReservationRequestDTO dto) 
-            throws ResponseStatusException {
+    @Autowired
+    private RoomRepository roomRepository;
 
-        if (roomDoesNotExist(dto.getRoomId())) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "The informed room does not exist."
-            );
-        }
+    public ReservationRequest emitRequest(UserDetails user, ReservationRequestDto dto) {
+        Room room = findRoom(dto.getRoomId());
+        validateEventDuration(dto);
+        validateRoomAvailability(dto, room);
 
-        if (dto.getStartTime().isAfter(dto.getEndTime())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, 
-                    "Invalid event duration."
-            );
-        }
-
-        if (conflictsWithActiveReservations(dto.getRoomId(),
-                                            dto.getDate(),
-                                            dto.getStartTime(),
-                                            dto.getEndTime())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, 
-                    "The room was already reserved."
-            );
-        }
-
-        ReservationRequest request = buildRequest(user, dto);
-
+        ReservationRequest request = buildRequest(user, dto, room);
         reservationRequestRepository.save(request);
+        return request;
     }
 
-    private boolean roomDoesNotExist(Long roomId) {
-        if (roomRepository.findById(roomId).isEmpty()) {
-            return true;
+    private Room findRoom(Long roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("Room not found"));
+    }
+
+    private void validateEventDuration(ReservationRequestDto dto) {
+        if (dto.getStartTime().isAfter(dto.getEndTime())) {
+            throw new InvalidEventDurationException();
         }
-
-        return false;
     }
 
-    private boolean conflictsWithActiveReservations(Long roomId,
-            LocalDate date, LocalTime startTime, LocalTime endTime) {
-        ArrayList<Reservation> candidateConflicts =
-                reservationRepository.findActiveReservationsByRoomIdAndDate(
-                        roomId, date
-                );
-
-        for (Reservation reservation : candidateConflicts) {
-            boolean happensBefore = (
-                    reservation.getStartTime().isBefore(startTime) &&
-                    reservation.getEndTime().isBefore(startTime)
-            );
-
-            boolean happensAfter = (
-                    reservation.getStartTime().isAfter(endTime) &&
-                    reservation.getEndTime().isAfter(endTime)
-            );
-
-            if (!(happensBefore || happensAfter)) {
-                return true;
-            }
+    private void validateRoomAvailability(ReservationRequestDto dto, Room room) {
+        if (hasConflictsWithActiveReservations(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime())) {
+            throw new RoomAlreadyReservedException();
         }
-
-        return false;
     }
 
-    private ReservationRequest buildRequest(
-            UserDetails user,
-            ReservationRequestDTO dto) {
+    private boolean hasConflictsWithActiveReservations(Long roomId, LocalDate date, LocalTime startTime,
+            LocalTime endTime) {
+       return reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
+    }
+
+    private ReservationRequest buildRequest(UserDetails user, ReservationRequestDto dto, Room room) {
         ReservationRequest request = new ReservationRequest();
-
-        request.setCardNumber(user.getId());
-        request.setRoomId(dto.getRoomId());
+        request.setUserId(user.getId());
+        request.setRoom(room);
         request.setStatus(ReservationRequestStatus.AWAITING_APPROVAL);
         request.setEventName(dto.getEventName());
         request.setEventDescription(dto.getEventDescription());
         request.setDate(dto.getDate());
         request.setStartTime(dto.getStartTime());
         request.setEndTime(dto.getEndTime());
-
         return request;
     }
 

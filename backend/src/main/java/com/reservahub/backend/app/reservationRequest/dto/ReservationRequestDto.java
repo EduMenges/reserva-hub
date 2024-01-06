@@ -1,4 +1,4 @@
-package com.reservahub.backend.app.reservationRequest;
+package com.reservahub.backend.app.reservationRequest.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReservationRequestDTO {
+public class ReservationRequestDto {
     private Long roomId;
     private String eventName;
     private String eventDescription;

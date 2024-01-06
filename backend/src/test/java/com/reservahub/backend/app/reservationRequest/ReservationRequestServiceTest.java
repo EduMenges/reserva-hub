@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -18,135 +18,117 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.reservahub.backend.app.reservation.Reservation;
+import com.reservahub.backend.app.exception.InvalidEventDurationException;
+import com.reservahub.backend.app.exception.RoomAlreadyReservedException;
 import com.reservahub.backend.app.reservation.ReservationRepository;
+import com.reservahub.backend.app.reservationRequest.dto.ReservationRequestDto;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.room.RoomRepository;
 import com.reservahub.backend.app.user.UserDetails;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReservationRequestServiceTest {
-    
-    @Autowired
-    private ReservationRequestService reservationRequestService;
 
-    @Mock
-    private UserDetails userDetails;
+        @Autowired
+        private ReservationRequestService reservationRequestService;
 
-    @Mock
-    private ReservationRequestDTO reservationRequestDTO;
+        @Mock
+        private UserDetails userDetails;
 
-    @Mock
-    private Room room;
+        @Mock
+        private ReservationRequestDto reservationRequestDTO;
 
-    @MockBean
-    private RoomRepository roomRepository;
+        @Mock
+        private Room room;
 
-    @MockBean
-    private ReservationRepository reservationRepository;
+        @MockBean
+        private RoomRepository roomRepository;
 
-    @MockBean
-    private ReservationRequestRepository reservationRequestRepository;
+        @MockBean
+        private ReservationRepository reservationRepository;
 
-    @Before
-    public void setup() {
-        when(roomRepository
-                .findById(anyLong()))
-                .thenReturn(Optional.of(room));
+        @MockBean
+        private ReservationRequestRepository reservationRequestRepository;
 
-        when(reservationRequestDTO
-                .getStartTime())
-                .thenReturn(LocalTime.of(20, 30, 0));
+        @Before
+        public void setup() {
+                when(roomRepository
+                                .findById(anyLong()))
+                                .thenReturn(Optional.of(room));
 
-        when(reservationRequestDTO
-                .getEndTime())
-                .thenReturn(LocalTime.of(21, 0, 0));
+                when(reservationRequestDTO
+                                .getStartTime())
+                                .thenReturn(LocalTime.of(20, 30, 0));
 
-        when(reservationRepository
-                .findActiveReservationsByRoomIdAndDate(anyLong(), any()))
-                .thenReturn(new ArrayList<>());
-    }
+                when(reservationRequestDTO
+                                .getEndTime())
+                                .thenReturn(LocalTime.of(21, 0, 0));
 
-    @Test
-    public void testRoomIsNotRegistered() {
-        when(roomRepository.findById(anyLong())).thenReturn(Optional.empty());
+                when(reservationRepository
+                                .existsActiveReservationWithTimeConflict(anyLong(), any(LocalDate.class),
+                                                any(LocalTime.class), any(LocalTime.class)))
+                                .thenReturn(false);
+        }
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class, 
-                () -> reservationRequestService.emitRequest(
-                        userDetails,
-                        reservationRequestDTO
-                )
-        );
+        @Test
+        public void shouldThrowEntityNotFoundExceptionForNonExistentRoom() {
+                when(roomRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-    }
+                EntityNotFoundException exception = assertThrows(
+                                EntityNotFoundException.class,
+                                () -> reservationRequestService.emitRequest(
+                                                userDetails,
+                                                reservationRequestDTO));
 
-    @Test
-    public void testEventDurationIsInvalid() {
-        when(reservationRequestDTO
-                .getStartTime())
-                .thenReturn(LocalTime.of(21, 0, 0));
+                assertEquals("Room not found", exception.getMessage());
+        }
 
-        when(reservationRequestDTO
-                .getEndTime())
-                .thenReturn(LocalTime.of(20, 0, 0));
+        @Test
+        public void shouldThrowInvalidEventDurationExceptionForEndTimeBeforeStartTime() {
+                when(reservationRequestDTO
+                                .getStartTime())
+                                .thenReturn(LocalTime.of(21, 0, 0));
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class, 
-                () -> reservationRequestService.emitRequest(
-                        userDetails,
-                        reservationRequestDTO
-                )
-        );
+                when(reservationRequestDTO
+                                .getEndTime())
+                                .thenReturn(LocalTime.of(20, 0, 0));
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-    }
+                InvalidEventDurationException exception = assertThrows(
+                                InvalidEventDurationException.class,
+                                () -> reservationRequestService.emitRequest(
+                                                userDetails,
+                                                reservationRequestDTO));
 
-    @Test
-    public void testConflictThrowsException() {
-        ArrayList<Reservation> reservations = new ArrayList<>();
+                assertEquals("Invalid event duration.", exception.getMessage());
+        }
 
-        Reservation reservation = new Reservation();
-        reservation.setStartTime(LocalTime.of(20, 0, 0));
-        reservation.setEndTime(LocalTime.of(21, 0, 0));
+        @Test
+        public void shouldThrowRoomAlreadyReservedExceptionForTimeConflict() {
+                when(reservationRepository.existsActiveReservationWithTimeConflict(
+                                anyLong(), any(LocalDate.class), any(LocalTime.class), any(LocalTime.class)))
+                                .thenReturn(true);
 
-        reservations.add(reservation);
+                when(reservationRequestDTO.getRoomId()).thenReturn(1L);
+                when(reservationRequestDTO.getDate()).thenReturn(LocalDate.now());
+                when(reservationRequestDTO.getStartTime()).thenReturn(LocalTime.of(10, 0));
+                when(reservationRequestDTO.getEndTime()).thenReturn(LocalTime.of(12, 0));
 
-        when(reservationRepository
-                .findActiveReservationsByRoomIdAndDate(anyLong(), any()))
-                .thenReturn(reservations);
+                assertThrows(RoomAlreadyReservedException.class, () -> {
+                        reservationRequestService.emitRequest(userDetails, reservationRequestDTO);
+                });
+        }
 
-        when(reservationRequestDTO
-                .getStartTime())
-                .thenReturn(LocalTime.of(20, 30, 0));
+        @Test
+        public void shouldSaveReservationRequestWhenNoConflictsOrErrors() {
+                reservationRequestService.emitRequest(userDetails,
+                                reservationRequestDTO);
 
-        when(reservationRequestDTO
-                .getEndTime())
-                .thenReturn(LocalTime.of(21, 0, 0));
-
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class, 
-                () -> reservationRequestService.emitRequest(
-                        userDetails,
-                        reservationRequestDTO
-                )
-        );
-
-        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
-    }
-
-    @Test
-    public void testEmittionEndsIfOk() {
-        reservationRequestService.emitRequest(userDetails,
-                                              reservationRequestDTO);
-
-        verify(reservationRequestRepository).save(any());
-    }
+                verify(reservationRequestRepository).save(any());
+        }
 
 }
