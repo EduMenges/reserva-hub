@@ -12,7 +12,7 @@ on:
       - "backend/**"
 
 jobs:
-  build-frontend:
+  build-backend:
     name: Approve
     runs-on: ubuntu-latest
 
