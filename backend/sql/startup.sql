@@ -91,7 +91,6 @@ VALUES (
 	'MEETING_ROOM'
 );
 
-
 /* RESERVAS */
 
 INSERT INTO public.reservations (
