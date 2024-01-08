@@ -2,6 +2,7 @@ package com.reservahub.backend.app.reservationRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class ReservationRequestController {
     @Autowired
     ReservationRequestService reservationRequestService;
 
+    @PreAuthorize("hasAuthority('STUDENT')")
     @PostMapping("/send")
     public ResponseEntity<ReservationRequest> emitRequest(
             @AuthenticationPrincipal UserDetails userDetails,
