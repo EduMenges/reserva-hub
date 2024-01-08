@@ -24,12 +24,12 @@ import com.reservahub.backend.app.user.UserService;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    
+
     @Autowired
     private JwtAuthFilter authFilter;
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         return new UserService();
     }
 
@@ -37,12 +37,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth-> auth
-                                .requestMatchers("/user/login").permitAll()
-                                .requestMatchers("/request/send").hasAuthority("STUDENT")
-                                .requestMatchers("/history/student").hasAuthority("STUDENT")
-                                .requestMatchers("/history/teacher").hasAuthority("TEACHER")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/user/login").permitAll()
+                        .anyRequest().authenticated()
 
                 )
                 .sessionManagement(management -> management
@@ -53,7 +50,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -69,5 +66,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-    
+
 }
