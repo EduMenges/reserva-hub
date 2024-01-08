@@ -1,13 +1,18 @@
 name: Build frontend
 
 on:
+  pull_request:
+    paths: 
+      - "frontend/**"
+      
   push:
+    branches:
+      - main
     paths: 
       - "frontend/**"
 
 jobs:
   build-frontend:
-
     runs-on: ubuntu-latest
 
     steps:
