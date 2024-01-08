@@ -1,5 +1,6 @@
 package com.reservahub.backend.app.exception;
 
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,4 +49,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(apiErrorMessage, new HttpHeaders(), apiErrorMessage.getStatus());
 
     }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<Object> invalidDataAccessApiUsageExceptionException(InvalidDataAccessApiUsageException ex){
+        ApiErrorMessage apiErrorMessage = new ApiErrorMessage(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        return new ResponseEntity<>(apiErrorMessage, new HttpHeaders(), apiErrorMessage.getStatus());
+
+    }
+
 }
