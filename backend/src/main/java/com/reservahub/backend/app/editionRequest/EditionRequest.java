@@ -1,8 +1,9 @@
-package com.reservahub.backend.app.reservationRequest;
+package com.reservahub.backend.app.editionRequest;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.reservahub.backend.app.reservation.Reservation;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
 import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
@@ -14,6 +15,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,19 +26,21 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "reservation_requests")
-public class ReservationRequest {
+@Table(name = "edition_requests")
+public class EditionRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
+    private Reservation reservation;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 32)
+    private EditionRequestStatus status;
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
-    @Enumerated(EnumType.STRING)
-    @Column(length = 32)
-    private ReservationRequestStatus status;
     @Column(length = 64)
     private String eventName;
     @Column(length = 280)
@@ -48,7 +52,7 @@ public class ReservationRequest {
     @Basic
     private LocalTime endTime;
 
-    public enum ReservationRequestStatus {
+    public enum EditionRequestStatus {
         AWAITING_APPROVAL,
         APPROVED,
         DENIED,
@@ -59,7 +63,7 @@ public class ReservationRequest {
         UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
 
         EntryMapping mapping = historyEntry.getEntryMapping();
-        mapping.setType(EntityType.RESERVATION_REQUEST);
+        mapping.setType(EntityType.EDITION_REQUEST);
         mapping.setEntityId(id);
 
         historyEntry.setEntryMapping(mapping);
@@ -89,5 +93,5 @@ public class ReservationRequest {
 
         return historyEntry;
     }
-
+    
 }

@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.reservahub.backend.app.room.Room;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryMapping;
+import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryStatus;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -48,6 +52,38 @@ public class Reservation {
         ACTIVE,
         EXPIRED,
         CANCELED
+    }
+
+    public UserHistoryEntryDTO convertToUserHistoryEntry() {
+        UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
+
+        EntryMapping mapping = historyEntry.getEntryMapping();
+        mapping.setType(EntityType.RESERVATION);
+        mapping.setEntityId(id);
+
+        historyEntry.setEntryMapping(mapping);
+
+        historyEntry.setEventName(eventName);
+
+        switch (status) {
+            case ACTIVE:
+            historyEntry.setStatus(EntryStatus.ACTIVE);
+            break;
+            case EXPIRED:
+            historyEntry.setStatus(EntryStatus.EXPIRED);
+            break;
+            case CANCELED:
+            historyEntry.setStatus(EntryStatus.CANCELED);
+            break;
+        }
+
+        historyEntry.setRoomNumber(room.getRoomNumber());
+        historyEntry.setBuildingNumber(room.getBuildingNumber());
+        historyEntry.setDate(date);
+        historyEntry.setStartTime(startTime);
+        historyEntry.setEndTime(endTime);
+
+        return historyEntry;
     }
 
 }
