@@ -25,7 +25,9 @@ jobs:
         distribution: oracle
         java-version-file: backend/.java-version
         cache: "gradle"
-        cache-dependency-path: backend/build.gradle
+        cache-dependency-path: |
+          backend/*.gradle*
+          backend/**/gradle-wrapper.properties
 
     - name: Build
       run: cd backend && gradle build
