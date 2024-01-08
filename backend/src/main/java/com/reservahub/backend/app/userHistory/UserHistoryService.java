@@ -1,6 +1,9 @@
 package com.reservahub.backend.app.userHistory;
 
 import java.util.ArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +21,7 @@ public class UserHistoryService {
 
     @Autowired
     private EditionRequestRepository detailedEditionRequestRepository;
-    
+
     @Autowired
     private ReservationRequestRepository detailedReservationRequestRepository;
 
@@ -26,45 +29,32 @@ public class UserHistoryService {
     private ReservationRepository detailedReservationRepository;
 
     public ArrayList<UserHistoryEntryDTO> getStudentHistory(Long userId) {
-        ArrayList<EditionRequest> orderedEditionRequests =
-                detailedEditionRequestRepository
-                .findEditionsWaitingApprovalByUserIdOrdered(userId);
-        ArrayList<ReservationRequest> orderedReservationRequests =
-                detailedReservationRequestRepository
-                .findRequestsWaitingApprovalByUserIdOrdered(userId);
-        ArrayList<Reservation> orderedReservations =
-                detailedReservationRepository
-                .findReservationsByUserIdOrdered(userId);
+        Stream<UserHistoryEntryDTO> editionRequestStream = detailedEditionRequestRepository
+                .findEditionsWaitingApprovalByUserIdOrdered(userId)
+                .stream()
+                .map(EditionRequest::convertToUserHistoryEntry);
 
-        ArrayList<UserHistoryEntryDTO> historyEntries = new ArrayList<>();        
-        
-        for (EditionRequest editionRequest : orderedEditionRequests) {
-            historyEntries.add(editionRequest.convertToUserHistoryEntry());
-        }
+        Stream<UserHistoryEntryDTO> reservationRequestStream = detailedReservationRequestRepository
+                .findRequestsWaitingApprovalByUserIdOrdered(userId)
+                .stream()
+                .map(ReservationRequest::convertToUserHistoryEntry);
 
-        for (ReservationRequest reservationRequest : orderedReservationRequests) {
-            historyEntries.add(reservationRequest.convertToUserHistoryEntry());
-        }
+        Stream<UserHistoryEntryDTO> reservationStream = detailedReservationRepository
+                .findReservationsByUserIdOrdered(userId)
+                .stream()
+                .map(Reservation::convertToUserHistoryEntry);
 
-        for (Reservation reservation : orderedReservations) {
-            historyEntries.add(reservation.convertToUserHistoryEntry());
-        }
-        
-        return historyEntries;
+        return Stream.of(editionRequestStream, reservationRequestStream, reservationStream)
+                .flatMap(Function.identity())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<UserHistoryEntryDTO> getTeacherHistory(Long userId) {
-        ArrayList<Reservation> orderedReservations =
-                detailedReservationRepository
-                .findReservationsByUserIdOrdered(userId);
-
-        ArrayList<UserHistoryEntryDTO> historyEntries = new ArrayList<>();        
-
-        for (Reservation reservation : orderedReservations) {
-            historyEntries.add(reservation.convertToUserHistoryEntry());
-        }
-        
-        return historyEntries;
+        return detailedReservationRepository
+                .findReservationsByUserIdOrdered(userId)
+                .stream()
+                .map(Reservation::convertToUserHistoryEntry)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
 }
