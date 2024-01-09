@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.reservahub.backend.app.exception.InvalidDateException;
 import com.reservahub.backend.app.exception.InvalidEventDurationException;
 import com.reservahub.backend.app.exception.RoomAlreadyReservedException;
 import com.reservahub.backend.app.reservation.ReservationRepository;
@@ -31,6 +32,7 @@ public class ReservationRequestService {
 
     public ReservationRequest emitRequest(UserDetails user, ReservationRequestDto dto) {
         Room room = findRoom(dto.getRoomId());
+        validateEventDate(dto);
         validateEventDuration(dto);
         validateRoomAvailability(dto, room);
 
@@ -42,6 +44,12 @@ public class ReservationRequestService {
     private Room findRoom(Long roomId) {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
+    }
+
+    private void validateEventDate(ReservationRequestDto dto) {
+        if (dto.getDate().isBefore(LocalDate.now())) {
+            throw new InvalidDateException();
+        }
     }
 
     private void validateEventDuration(ReservationRequestDto dto) {
@@ -58,7 +66,7 @@ public class ReservationRequestService {
 
     private boolean hasConflictsWithActiveReservations(Long roomId, LocalDate date, LocalTime startTime,
             LocalTime endTime) {
-       return reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
+        return reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
     }
 
     private ReservationRequest buildRequest(UserDetails user, ReservationRequestDto dto, Room room) {

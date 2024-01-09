@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.reservahub.backend.app.exception.InvalidDateException;
 import com.reservahub.backend.app.exception.InvalidEventDurationException;
 import com.reservahub.backend.app.exception.RoomAlreadyReservedException;
 import com.reservahub.backend.app.reservation.ReservationRepository;
@@ -106,6 +107,21 @@ public class ReservationRequestServiceTest {
 
                 assertEquals("Invalid event duration.", exception.getMessage());
         }
+
+        @Test
+        public void shouldThrowInvalidDateExceptionForAnteriorToTodayDate() {
+                when(reservationRequestDTO.getDate()).thenReturn(LocalDate.now().minusDays(5));
+
+
+                InvalidDateException exception = assertThrows(
+                                InvalidDateException.class,
+                                () -> reservationRequestService.emitRequest(
+                                                userDetails,
+                                                reservationRequestDTO));
+
+                assertEquals("Invalid date.", exception.getMessage());
+        }
+
 
         @Test
         public void shouldThrowRoomAlreadyReservedExceptionForTimeConflict() {
