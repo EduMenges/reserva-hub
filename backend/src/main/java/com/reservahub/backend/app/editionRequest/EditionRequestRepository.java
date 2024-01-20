@@ -9,15 +9,25 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EditionRequestRepository
-        extends JpaRepository<EditionRequest, Long> {
+                extends JpaRepository<EditionRequest, Long> {
 
-    @Query("FROM EditionRequest e " +
-            "JOIN e.reservation r " +
-            "WHERE e.status = 'AWAITING_APPROVAL' " +
-            "AND r.userId = :userId " +
-            "ORDER BY e.date, e.startTime")
-    public ArrayList<EditionRequest>
-            findEditionsWaitingApprovalByUserIdOrdered(
-                    @Param("userId") Long userId);
-    
+        @Query("FROM EditionRequest e " +
+                        "JOIN e.reservation r " +
+                        "JOIN e.user u " +
+
+                        "WHERE e.status = 'AWAITING_APPROVAL' " +
+                        "AND u.id = :userId " +
+                        "ORDER BY e.date, e.startTime")
+        public ArrayList<EditionRequest> findEditionsWaitingApprovalByUserIdOrdered(
+                        @Param("userId") Long userId);
+
+        @Query("SELECT e FROM EditionRequest e " +
+                        "JOIN FETCH e.reservation " +
+                        "JOIN FETCH e.user " +
+                        "JOIN FETCH e.room " +
+                        "ORDER BY " +
+                        "e.date " +
+                        "DESC")
+        public ArrayList<EditionRequest> findAllEditions();
+
 }
