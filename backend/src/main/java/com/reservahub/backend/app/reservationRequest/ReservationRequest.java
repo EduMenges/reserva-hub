@@ -3,11 +3,14 @@ package com.reservahub.backend.app.reservationRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntityType;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryMapping;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryStatus;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.RoomInfo;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.UserInfo;
 import com.reservahub.backend.app.room.Room;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryMapping;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryStatus;
+import com.reservahub.backend.app.user.User;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -26,11 +29,12 @@ import lombok.Data;
 @Entity
 @Table(name = "reservation_requests")
 public class ReservationRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
@@ -58,31 +62,38 @@ public class ReservationRequest {
     public UserHistoryEntryDTO convertToUserHistoryEntry() {
         UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
 
-        EntryMapping mapping = historyEntry.getEntryMapping();
-        mapping.setType(EntityType.RESERVATION_REQUEST);
-        mapping.setEntityId(id);
+        UserInfo userInfo = historyEntry.getUserInfo();
+        userInfo.setUserId(user.getId());
+        userInfo.setRole(user.getRole().name());
+        userInfo.setUsername(user.getUsername());
 
-        historyEntry.setEntryMapping(mapping);
+        EntryMapping entryMapping = historyEntry.getEntryMapping();
+        entryMapping.setType(EntityType.RESERVATION_REQUEST);
+        entryMapping.setEntityId(id);
 
+        RoomInfo roomInfo = historyEntry.getRoomInfo();
+        roomInfo.setBuildingNumber(room.getBuildingNumber());
+        roomInfo.setRoomNumber(room.getRoomNumber());
+
+        historyEntry.setUserInfo(userInfo);
+        historyEntry.setEntryMapping(entryMapping);
         historyEntry.setEventName(eventName);
 
         switch (status) {
             case AWAITING_APPROVAL:
-            historyEntry.setStatus(EntryStatus.AWAITING_APPROVAL);
-            break;
+                historyEntry.setStatus(EntryStatus.AWAITING_APPROVAL);
+                break;
             case APPROVED:
-            historyEntry.setStatus(EntryStatus.APPROVED);
-            break;
+                historyEntry.setStatus(EntryStatus.APPROVED);
+                break;
             case DENIED:
-            historyEntry.setStatus(EntryStatus.DENIED);
-            break;
+                historyEntry.setStatus(EntryStatus.DENIED);
+                break;
             case CANCELED:
-            historyEntry.setStatus(EntryStatus.CANCELED);
-            break;
+                historyEntry.setStatus(EntryStatus.CANCELED);
+                break;
         }
 
-        historyEntry.setRoomNumber(room.getRoomNumber());
-        historyEntry.setBuildingNumber(room.getBuildingNumber());
         historyEntry.setDate(date);
         historyEntry.setStartTime(startTime);
         historyEntry.setEndTime(endTime);
