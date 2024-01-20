@@ -10,6 +10,8 @@ Para rodar, basta executar `./gradlew bootRun`. Caso você encontre um erro ao r
 
 Para facilitar o desenvolvimento, nós usamos o Postman, que contém uma boa documentação das possíveis chamadas e endpoints do servidor. Basta criar uma conta e instalar o aplicativo na sua máquina. Também é necessário se conectar ao workspace. Para isso, contate o João Paulo.
 
+A documentação feita no postman também está disponível em: [reservahub API docs](https://documenter.getpostman.com/view/9591503/2s9YsT6Tmq)
+
 ### Autenticação
 
 Todos os endpoints são bloqueados por padrão e precisam de um bearer token, exceto, é claro, pelo login.
