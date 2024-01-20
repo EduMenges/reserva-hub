@@ -41,4 +41,15 @@ public interface ReservationRepository
     ArrayList<Reservation> findReservationsByUserIdOrdered(
             @Param("userId") Long userId);
 
+    @Query("FROM Reservation r " +
+           "ORDER BY " +
+                "CASE r.status " +
+                    "WHEN 'ACTIVE' THEN 1 " +
+                    "WHEN 'CANCELED' THEN 2 " +
+                    "WHEN 'EXPIRED' THEN 3 " +
+                    "ELSE 0 " +
+                "END, " +
+                "r.date, " +
+                "r.startTime")
+    ArrayList<Reservation> findAllReservations();
 }
