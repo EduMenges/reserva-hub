@@ -4,14 +4,13 @@
   import SmallContainer from "$lib/components/SmallContainer.svelte";
 </script>
 
-<SmallContainer>
-  <header class="text-center mb-3">
+<SmallContainer class="card">
+  <header class="card-header text-center">
     <Logo />
-    <hr />
     <p>Entre com a sua conta pessoal do INF</p>
   </header>
 
-  <form method="post" use:enhance>
+  <form class="card-body" method="post" use:enhance>
     <div class="mb-3">
       <label class="form-label" for="username">Usuário</label>
       <input id="username" class="form-control" type="text" />
