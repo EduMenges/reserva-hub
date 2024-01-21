@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Database specific ###
-/xxsrc/main/resources/application.properties
+src/main/resources/application.properties
