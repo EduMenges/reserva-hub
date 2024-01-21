@@ -9,14 +9,21 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReservationRequestRepository
-        extends JpaRepository<ReservationRequest, Long> {
+                extends JpaRepository<ReservationRequest, Long> {
 
-    @Query("FROM ReservationRequest r " +
-            "WHERE r.status = 'AWAITING_APPROVAL' " +
-            "AND r.userId = :userId " +
-            "ORDER BY r.date, r.startTime")
-    public ArrayList<ReservationRequest>
-            findRequestsWaitingApprovalByUserIdOrdered(
+        @Query("FROM ReservationRequest r " +
+                        "WHERE r.status = 'AWAITING_APPROVAL' " +
+                        "AND r.user.id = :userId " +
+                        "ORDER BY r.date, r.startTime")
+        public ArrayList<ReservationRequest> findRequestsWaitingApprovalByUserIdOrdered(
                         @Param("userId") Long userId);
-            
+
+        @Query("SELECT r FROM ReservationRequest r " +
+                        "JOIN FETCH r.user " +
+                        "JOIN FETCH r.room " +
+                        "ORDER BY " +
+                        "r.date " +
+                        "DESC")
+        public ArrayList<ReservationRequest> findAllRequests();
+
 }

@@ -14,7 +14,9 @@ import com.reservahub.backend.app.reservationRequest.ReservationRequest.Reservat
 import com.reservahub.backend.app.reservationRequest.dto.ReservationRequestDto;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.room.RoomRepository;
+import com.reservahub.backend.app.user.User;
 import com.reservahub.backend.app.user.UserDetails;
+import com.reservahub.backend.app.user.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -30,8 +32,13 @@ public class ReservationRequestService {
     @Autowired
     private RoomRepository roomRepository;
 
-    public ReservationRequest emitRequest(UserDetails user, ReservationRequestDto dto) {
+    @Autowired
+    private UserRepository userRepository;
+
+
+    public ReservationRequest emitRequest(UserDetails userDetails, ReservationRequestDto dto) {
         Room room = findRoom(dto.getRoomId());
+        User user = findUser(userDetails.getId());
         validateEventDate(dto);
         validateEventDuration(dto);
         validateRoomAvailability(dto, room);
@@ -45,6 +52,12 @@ public class ReservationRequestService {
         return roomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room not found"));
     }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
 
     private void validateEventDate(ReservationRequestDto dto) {
         if (dto.getDate().isBefore(LocalDate.now())) {
@@ -69,9 +82,9 @@ public class ReservationRequestService {
         return reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
     }
 
-    private ReservationRequest buildRequest(UserDetails user, ReservationRequestDto dto, Room room) {
+    private ReservationRequest buildRequest(User user, ReservationRequestDto dto, Room room) {
         ReservationRequest request = new ReservationRequest();
-        request.setUserId(user.getId());
+        request.setUser(user);
         request.setRoom(room);
         request.setStatus(ReservationRequestStatus.AWAITING_APPROVAL);
         request.setEventName(dto.getEventName());

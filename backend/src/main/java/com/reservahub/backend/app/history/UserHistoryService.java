@@ -1,4 +1,4 @@
-package com.reservahub.backend.app.userHistory;
+package com.reservahub.backend.app.history;
 
 import java.util.ArrayList;
 import java.util.function.Function;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.reservahub.backend.app.editionRequest.EditionRequest;
 import com.reservahub.backend.app.editionRequest.EditionRequestRepository;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
 import com.reservahub.backend.app.reservation.Reservation;
 import com.reservahub.backend.app.reservation.ReservationRepository;
 import com.reservahub.backend.app.reservationRequest.ReservationRequest;
 import com.reservahub.backend.app.reservationRequest.ReservationRequestRepository;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
 
 @Service
 public class UserHistoryService {
@@ -57,4 +57,24 @@ public class UserHistoryService {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public ArrayList<UserHistoryEntryDTO> getGlobalHistory() {
+        Stream<UserHistoryEntryDTO> editionRequestStream = detailedEditionRequestRepository
+                .findAllEditions()
+                .stream()
+                .map(EditionRequest::convertToUserHistoryEntry);
+
+        Stream<UserHistoryEntryDTO> reservationRequestStream = detailedReservationRequestRepository
+                .findAllRequests()
+                .stream()
+                .map(ReservationRequest::convertToUserHistoryEntry);
+
+        Stream<UserHistoryEntryDTO> reservationStream = detailedReservationRepository
+                .findAllReservations()
+                .stream()
+                .map(Reservation::convertToUserHistoryEntry);
+
+        return Stream.of(editionRequestStream, reservationRequestStream, reservationStream)
+                .flatMap(Function.identity())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 }

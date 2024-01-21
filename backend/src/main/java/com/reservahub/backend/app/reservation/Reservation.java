@@ -3,11 +3,14 @@ package com.reservahub.backend.app.reservation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntityType;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryMapping;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryStatus;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.RoomInfo;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.UserInfo;
 import com.reservahub.backend.app.room.Room;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryMapping;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryStatus;
+import com.reservahub.backend.app.user.User;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -30,7 +33,9 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
@@ -56,13 +61,23 @@ public class Reservation {
 
     public UserHistoryEntryDTO convertToUserHistoryEntry() {
         UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
+        
+        UserInfo userInfo = historyEntry.getUserInfo();
+        userInfo.setUserId(user.getId());
+        userInfo.setRole(user.getRole().name());
+        userInfo.setUsername(user.getUsername());
 
-        EntryMapping mapping = historyEntry.getEntryMapping();
-        mapping.setType(EntityType.RESERVATION);
-        mapping.setEntityId(id);
+        EntryMapping entryMapping = historyEntry.getEntryMapping();
+        entryMapping.setType(EntityType.RESERVATION);
+        entryMapping.setEntityId(id);
 
-        historyEntry.setEntryMapping(mapping);
+        RoomInfo roomInfo = historyEntry.getRoomInfo();
+        roomInfo.setBuildingNumber(room.getBuildingNumber());
+        roomInfo.setRoomNumber(room.getRoomNumber());
 
+        
+        historyEntry.setUserInfo(userInfo);
+        historyEntry.setEntryMapping(entryMapping);
         historyEntry.setEventName(eventName);
 
         switch (status) {
@@ -77,13 +92,10 @@ public class Reservation {
             break;
         }
 
-        historyEntry.setRoomNumber(room.getRoomNumber());
-        historyEntry.setBuildingNumber(room.getBuildingNumber());
         historyEntry.setDate(date);
         historyEntry.setStartTime(startTime);
         historyEntry.setEndTime(endTime);
 
         return historyEntry;
     }
-
 }
