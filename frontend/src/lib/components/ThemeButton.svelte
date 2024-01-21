@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, NavItem } from "@sveltestrap/sveltestrap";
-  import { onMount } from "svelte";
-    import { lightMode, darkMode, autoMode, type ThemeOption } from "./ThemeButton";
 
+  import { lightMode, darkMode, autoMode, type ThemeOption } from "./ThemeButton";
+  
   export let selected: ThemeOption;
 </script>
 
