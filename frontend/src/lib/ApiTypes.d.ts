@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { errorSchema } from "./schemas";
+import { NumericRange } from "@sveltejs/kit";
 
-const userSchema = z.object({
-    username: z.string(),
-    token: z.string(),
-});
+export type Error = z.infer<typeof errorSchema>;
 
-export type User = z.infer<userSchema>;
+export type ErrorStatus = NumericRange<400, 599>;
+
+export type OkStatus = NumericRange<100, 399>;

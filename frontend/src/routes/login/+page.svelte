@@ -6,10 +6,11 @@
     import { superForm } from "sveltekit-superforms/client";
     import SuperDebug from "sveltekit-superforms/client/SuperDebug.svelte";
     import ListErrors from "$lib/components/ListErrors.svelte";
+    import { errorSchema, loginSchema } from "$lib/schemas";
 
     export let data: PageData;
 
-    const { form, errors, constraints } = superForm(data.form);
+    const { form, errors, constraints, message } = superForm(data.form);
 </script>
 
 <svelte:head>
@@ -23,6 +24,14 @@
     </header>
 
     <form class="card-body was-validated" method="post" use:enhance>
+        {#if $message}
+        {console.log($message.errors)}
+            {#each $message.errors as errors}
+                {errors}
+            {/each}
+            <ListErrors errors={$message.errors} />
+        {/if}
+
         <div class="mb-3">
             <label class="form-label" for="username">Usuário</label>
             <input
@@ -38,13 +47,7 @@
 
         <div class="mb-3">
             <label class="form-label" for="password">Senha</label>
-            <input
-                id="password"
-                class="form-control"
-                type="password"
-                name="password"
-                {...$constraints.password}
-            />
+            <input id="password" class="form-control" type="password" name="password" {...$constraints.password} />
             <ListErrors errors={$errors.password} />
         </div>
 

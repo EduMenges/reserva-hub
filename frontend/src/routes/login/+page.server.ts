@@ -3,24 +3,24 @@ import { redirect, type Actions, fail } from "@sveltejs/kit";
 import { z } from "zod";
 import { zfd } from "zod-form-data";
 import type { PageServerLoad } from "./$types";
-import { superValidate } from "sveltekit-superforms/server";
-import { type UnwrapEffects } from "sveltekit-superforms";
+import { message, setError, superValidate } from "sveltekit-superforms/server";
+import { RestMethods } from "$lib/ApiHelpers";
+import { ErrorStatusSchema, errorSchema } from "$lib/schemas";
+import type { ErrorStatus } from "$lib/ApiTypes";
+import { loginSchema } from "$lib/schemas";
 
-const loginSchema = zfd.formData({
-    username: zfd.text(z.string({ required_error: "Seu nome de usuário é necessário" })),
-    password: zfd.text(z.string({ required_error: "Sua senha é necessária" })),
-});
-
-const responseSchema = z.object({
-    token: z.string(),
-    tokenType: z.string(),
-    expirationDate: z.date(),
-    role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
-});
+const responseSchema = z.union([
+    z.object({
+        token: z.string(),
+        tokenType: z.string(),
+        expirationDate: z.date(),
+        role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
+    }),
+    errorSchema,
+]);
 
 export const load = (async ({ request }) => {
     const form = await superValidate(request, loginSchema.sourceType());
-
     return { form };
 }) satisfies PageServerLoad;
 
@@ -29,21 +29,22 @@ export const actions: Actions = {
         const form = await superValidate(request, loginSchema.sourceType());
 
         if (!form.valid) {
-            console.log(form);
             return fail(400, { form });
         }
 
-        const body = await api.post("user/login", form.data);
+        const body = await api.call<z.infer<typeof responseSchema>>(
+            RestMethods.POST,
+            "user/login",
+            JSON.stringify(form.data)
+        );
 
-        const response = responseSchema.parse(body.errors);
-
-        console.log(response);
-
-        if (body.errors) {
-            return fail(401, { form });
+        if (ErrorStatusSchema.safeParse(body.status).success) {
+            return message(form, body.data, {
+                status: body.status as ErrorStatus,
+            });
         }
 
-        const stringUser = JSON.stringify(response);
+        const stringUser = JSON.stringify(body);
 
         cookies.set("jwt", stringUser, { path: "/" });
 
