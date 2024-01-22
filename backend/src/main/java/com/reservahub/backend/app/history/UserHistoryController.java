@@ -30,7 +30,7 @@ public class UserHistoryController {
             return ResponseEntity.ok(historyService.getTeacherHistory(userId));
         } else if (User.RoleEnum.STUDENT.name().equals(userDetails.getAuthorityName())) {
             return ResponseEntity.ok(historyService.getStudentHistory(userId));
-        }else {
+        } else {
             return ResponseEntity.ok(historyService.getGlobalHistory());
         }
     }

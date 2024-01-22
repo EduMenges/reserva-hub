@@ -1,4 +1,5 @@
 package com.reservahub.backend.app.history;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.reservahub.backend.app.editionRequest.EditionRequest;
@@ -11,12 +12,12 @@ import com.reservahub.backend.app.reservation.Reservation;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.user.User;
 
-
 public class UserHistoryMapper {
 
     public static UserHistoryEntryDTO toDto(EditionRequest editionRequest) {
         UserHistoryEntryDTO dto = createBasicDto(editionRequest.getUser(), editionRequest.getRoom());
-        setEventDetails(dto, editionRequest.getEventName(), editionRequest.getDate(), editionRequest.getStartTime(), editionRequest.getEndTime());
+        setEventDetails(dto, editionRequest.getEventName(), editionRequest.getDate(), editionRequest.getStartTime(),
+                editionRequest.getEndTime());
         dto.getEntryMapping().setType(EntityType.EDITION_REQUEST);
         dto.getEntryMapping().setEntityId(editionRequest.getId());
         updateEntryStatus(dto, editionRequest.getStatus());
@@ -25,7 +26,8 @@ public class UserHistoryMapper {
 
     public static UserHistoryEntryDTO toDto(Reservation reservation) {
         UserHistoryEntryDTO dto = createBasicDto(reservation.getUser(), reservation.getRoom());
-        setEventDetails(dto, reservation.getEventName(), reservation.getDate(), reservation.getStartTime(), reservation.getEndTime());
+        setEventDetails(dto, reservation.getEventName(), reservation.getDate(), reservation.getStartTime(),
+                reservation.getEndTime());
         dto.getEntryMapping().setType(determineReservationType(reservation.getStatus()));
         dto.getEntryMapping().setEntityId(reservation.getId());
         updateEntryStatus(dto, reservation.getStatus());
@@ -39,7 +41,8 @@ public class UserHistoryMapper {
         return dto;
     }
 
-    private static void setEventDetails(UserHistoryEntryDTO dto, String eventName, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    private static void setEventDetails(UserHistoryEntryDTO dto, String eventName, LocalDate date, LocalTime startTime,
+            LocalTime endTime) {
         dto.setEventName(eventName);
         dto.setDate(date);
         dto.setStartTime(startTime);
@@ -47,9 +50,10 @@ public class UserHistoryMapper {
     }
 
     private static EntityType determineReservationType(Reservation.ReservationStatus status) {
-        return status == Reservation.ReservationStatus.AWAITING_APPROVAL || status == Reservation.ReservationStatus.DENIED 
-               ? EntityType.RESERVATION_REQUEST 
-               : EntityType.RESERVATION;
+        return status == Reservation.ReservationStatus.AWAITING_APPROVAL
+                || status == Reservation.ReservationStatus.DENIED
+                        ? EntityType.RESERVATION_REQUEST
+                        : EntityType.RESERVATION;
     }
 
     private static void updateEntryStatus(UserHistoryEntryDTO dto, Enum<?> status) {
