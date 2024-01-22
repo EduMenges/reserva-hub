@@ -2,13 +2,6 @@ package com.reservahub.backend.app.reservation;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntityType;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryMapping;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryStatus;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.RoomInfo;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.UserInfo;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.user.User;
 
@@ -29,7 +22,7 @@ import lombok.Data;
 @Entity
 @Table(name = "reservations")
 public class Reservation {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -56,46 +49,8 @@ public class Reservation {
     public enum ReservationStatus {
         ACTIVE,
         EXPIRED,
-        CANCELED
-    }
-
-    public UserHistoryEntryDTO convertToUserHistoryEntry() {
-        UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
-        
-        UserInfo userInfo = historyEntry.getUserInfo();
-        userInfo.setUserId(user.getId());
-        userInfo.setRole(user.getRole().name());
-        userInfo.setUsername(user.getUsername());
-
-        EntryMapping entryMapping = historyEntry.getEntryMapping();
-        entryMapping.setType(EntityType.RESERVATION);
-        entryMapping.setEntityId(id);
-
-        RoomInfo roomInfo = historyEntry.getRoomInfo();
-        roomInfo.setBuildingNumber(room.getBuildingNumber());
-        roomInfo.setRoomNumber(room.getRoomNumber());
-
-        
-        historyEntry.setUserInfo(userInfo);
-        historyEntry.setEntryMapping(entryMapping);
-        historyEntry.setEventName(eventName);
-
-        switch (status) {
-            case ACTIVE:
-            historyEntry.setStatus(EntryStatus.ACTIVE);
-            break;
-            case EXPIRED:
-            historyEntry.setStatus(EntryStatus.EXPIRED);
-            break;
-            case CANCELED:
-            historyEntry.setStatus(EntryStatus.CANCELED);
-            break;
-        }
-
-        historyEntry.setDate(date);
-        historyEntry.setStartTime(startTime);
-        historyEntry.setEndTime(endTime);
-
-        return historyEntry;
+        CANCELED,
+        AWAITING_APPROVAL,
+        DENIED,
     }
 }

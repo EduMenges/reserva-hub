@@ -1,4 +1,4 @@
-package com.reservahub.backend.app.reservationRequest.dto;
+package com.reservahub.backend.app.reservation.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

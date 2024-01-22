@@ -42,6 +42,13 @@ public interface ReservationRepository
         public ArrayList<Reservation> findReservationsByUserIdOrdered(
                         @Param("userId") Long userId);
 
+        @Query("FROM Reservation r " +
+                        "WHERE r.status = 'AWAITING_APPROVAL' " +
+                        "AND r.user.id = :userId " +
+                        "ORDER BY r.date, r.startTime")
+        public ArrayList<Reservation> findRequestsWaitingApprovalByUserIdOrdered(
+                        @Param("userId") Long userId);
+
         @Query("SELECT r FROM Reservation r " +
                         "JOIN FETCH r.user " +
                         "JOIN FETCH r.room " +

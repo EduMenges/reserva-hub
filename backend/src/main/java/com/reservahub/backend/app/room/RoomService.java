@@ -13,7 +13,7 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
-    public List<Room> filterRooms(RoomFilterDto filter){
+    public List<Room> filterRooms(RoomFilterDto filter) {
         Specification<Room> spec = RoomFilter.dynamicRoomFilter(filter);
         return roomRepository.findAll(spec);
     }

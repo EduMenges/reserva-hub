@@ -22,19 +22,25 @@ public class UserHistoryEntryDTO {
     private LocalTime endTime;
 
     @Data
-    public class RoomInfo {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RoomInfo {
         private String roomNumber;
         private String buildingNumber;
     }
 
     @Data
-    public class EntryMapping {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class EntryMapping {
         private EntityType type;
         private Long entityId;
     }
 
     @Data
-    public class UserInfo {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserInfo {
         private String username;
         private Long userId;
         private String role;
