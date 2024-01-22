@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit";
-import type { OkStatus, ErrorStatus } from "./ApiTypes";
+import type { ErrorCodes, OkCodes } from "./ApiTypes";
+import { errorCodes } from "./schemas";
 
 const base = new URL("http://localhost:8080");
 
@@ -13,12 +14,12 @@ export enum RestMethods {
 type JSONData = string;
 type AuthToken = string;
 
-export const call = async <T>(
+export const call = async <S, E>(
     method: RestMethods,
     path: string,
     body?: JSONData,
     token?: AuthToken
-): Promise<{ status: ErrorStatus | OkStatus; data: T }> => {
+): Promise<{ status: OkCodes, data: S } | { status: ErrorCodes, data: E }> => {
     const headers = new Headers([["Content-Type", "application/json"]]);
 
     if (token) {
@@ -38,10 +39,11 @@ export const call = async <T>(
             const text = await response.text();
             const data = text ? JSON.parse(text) : {};
 
-            if (response.status >= 400 && response.status <= 599) {
-                return { status: response.status as ErrorStatus, data };
+            if (response.status in errorCodes) {
+                return { status: response.status as ErrorCodes, data: data as E };
             }
-            return { status: response.status as OkStatus, data };
+
+            return { status: response.status as OkCodes, data: data as S };
         })
         .catch((err) => {
             throw error(err);

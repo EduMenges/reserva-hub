@@ -1,8 +1,9 @@
-import { errorSchema } from "./schemas";
-import { NumericRange } from "@sveltejs/kit";
+import { errorCodesSchema, errorSchema, okCodesSchema } from "./schemas";
+import type { NumericRange } from "@sveltejs/kit";
+import { z } from "zod"
 
 export type Error = z.infer<typeof errorSchema>;
 
-export type ErrorStatus = NumericRange<400, 599>;
+export type ErrorCodes = z.infer<typeof errorCodesSchema>
 
-export type OkStatus = NumericRange<100, 399>;
+export type OkCodes = z.infer<typeof okCodesSchema>

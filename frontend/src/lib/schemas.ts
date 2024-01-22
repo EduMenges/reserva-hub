@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { ZodAny, z } from "zod";
 import { zfd } from "zod-form-data";
 
 export enum Status {
@@ -7,9 +7,39 @@ export enum Status {
     Canceled = "Canceled",
 }
 
-export const errorSchema = z.object({ status: z.string(), errors: z.array(z.string()) });
+export function isValidZodLiteralUnion<T extends z.ZodLiteral<unknown>>(
+    literals: T[]
+): literals is [T, T, ...T[]] {
+    return literals.length >= 2;
+}
 
-export const BookingSchema = z.object({
+export function constructZodLiteralUnionType<T extends z.ZodLiteral<unknown>>(
+    literals: T[]
+) {
+    if (!isValidZodLiteralUnion(literals)) {
+        throw new Error(
+            'Literals passed do not meet the criteria for constructing a union schema, the minimum length is 2'
+        );
+    }
+
+    return z.union(literals);
+}
+
+export const okCodes = [100, 101, 102, 103, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 306, 307, 308] as const;
+
+export const errorCodes = [400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 425, 426, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511] as const;
+
+export const errorCodesSchema = constructZodLiteralUnionType(errorCodes.map(literal => z.literal(literal)));
+
+export const okCodesSchema = constructZodLiteralUnionType(okCodes.map(literal => z.literal(literal)));
+
+export const errorSchema = z.object({ status: z.string(), errors: z.string().array() });
+
+export function maybeError(errorSchema: z.AnyZodObject) {
+    return z.object({ data: errorSchema, status: errorCodesSchema });
+}
+
+export const bookingSchema = z.object({
     startDate: z.date(),
     endDate: z.date(),
     name: z.string(),
@@ -18,18 +48,18 @@ export const BookingSchema = z.object({
     status: z.nativeEnum(Status),
 });
 
-export type BookingType = z.infer<typeof BookingSchema>;
+export type BookingType = z.infer<typeof bookingSchema>;
 
-export const RoomSchema = z.object({
+export const roomSchema = z.object({
     name: z.string(),
     building: z.string(),
     vacancy: z.number(),
 });
 
-export const OkStatusSchema = z.number().min(100).max(399);
-export const ErrorStatusSchema = z.number().min(400).max(599);
+export const okStatusSchema = z.number().min(100).max(399);
+export const errorStatusSchema = z.number().min(400).max(599);
 
-export type RoomType = z.infer<typeof RoomSchema>;
+export type RoomType = z.infer<typeof roomSchema>;
 
 export const loginSchema = zfd.formData({
     username: zfd.text(z.string({ required_error: "Seu nome de usuário é necessário" })),
