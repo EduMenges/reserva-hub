@@ -1,23 +1,21 @@
 import { api } from "$lib";
 import { redirect, type Actions, fail } from "@sveltejs/kit";
 import { z } from "zod";
-import { zfd } from "zod-form-data";
 import type { PageServerLoad } from "./$types";
-import { message, setError, superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms/server";
 import { RestMethods } from "$lib/ApiHelpers";
-import { ErrorStatusSchema, errorSchema } from "$lib/schemas";
-import type { ErrorStatus } from "$lib/ApiTypes";
+import { errorSchema, maybeError } from "$lib/schemas";
+import type { Error } from "$lib/ApiTypes";
 import { loginSchema } from "$lib/schemas";
 
-const responseSchema = z.union([
-    z.object({
-        token: z.string(),
-        tokenType: z.string(),
-        expirationDate: z.date(),
-        role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
-    }),
-    errorSchema,
-]);
+const responseSchema = z.object({
+    token: z.string(),
+    tokenType: z.string(),
+    expirationDate: z.date(),
+    role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
+})
+
+type Response = z.infer<typeof responseSchema>;
 
 export const load = (async ({ request }) => {
     const form = await superValidate(request, loginSchema.sourceType());
@@ -32,21 +30,23 @@ export const actions: Actions = {
             return fail(400, { form });
         }
 
-        const body = await api.call<z.infer<typeof responseSchema>>(
+        const body = await api.call<z.infer<(typeof responseSchema)>, Error>(
             RestMethods.POST,
             "user/login",
             JSON.stringify(form.data)
         );
 
-        if (ErrorStatusSchema.safeParse(body.status).success) {
-            return message(form, body.data, {
-                status: body.status as ErrorStatus,
-            });
+        const errorBody = maybeError(errorSchema).safeParse(body);
+
+        if (errorBody.success) {
+            return message(form, errorBody.data.data, { status: errorBody.data.status })
         }
 
-        const stringUser = JSON.stringify(body);
+        const okBody = body.data as Response;
 
-        cookies.set("jwt", stringUser, { path: "/" });
+        const stringUser = JSON.stringify(body.data);
+
+        cookies.set("jwt", stringUser, { path: "/", expires: okBody.expirationDate });
 
         return redirect(307, "/");
     },

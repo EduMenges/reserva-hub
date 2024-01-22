@@ -4,9 +4,8 @@
     import SmallContainer from "$lib/components/SmallContainer.svelte";
     import type { PageData } from "./$types";
     import { superForm } from "sveltekit-superforms/client";
-    import SuperDebug from "sveltekit-superforms/client/SuperDebug.svelte";
     import ListErrors from "$lib/components/ListErrors.svelte";
-    import { errorSchema, loginSchema } from "$lib/schemas";
+    import ListMessages from "$lib/components/ListMessages.svelte";
 
     export let data: PageData;
 
@@ -24,13 +23,7 @@
     </header>
 
     <form class="card-body was-validated" method="post" use:enhance>
-        {#if $message}
-        {console.log($message.errors)}
-            {#each $message.errors as errors}
-                {errors}
-            {/each}
-            <ListErrors errors={$message.errors} />
-        {/if}
+        <ListMessages message={$message} />
 
         <div class="mb-3">
             <label class="form-label" for="username">Usuário</label>
