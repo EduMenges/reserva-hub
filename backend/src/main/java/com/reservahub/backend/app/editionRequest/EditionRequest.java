@@ -3,12 +3,6 @@ package com.reservahub.backend.app.editionRequest;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntityType;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryMapping;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntryStatus;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.RoomInfo;
-import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.UserInfo;
 import com.reservahub.backend.app.reservation.Reservation;
 import com.reservahub.backend.app.room.Room;
 import com.reservahub.backend.app.user.User;
@@ -64,47 +58,4 @@ public class EditionRequest {
         DENIED,
         CANCELED
     }
-
-    public UserHistoryEntryDTO convertToUserHistoryEntry() {
-        UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
-
-        UserInfo userInfo = historyEntry.getUserInfo();
-        userInfo.setUserId(user.getId());
-        userInfo.setRole(user.getRole().name());
-        userInfo.setUsername(user.getUsername());
-
-        EntryMapping entryMapping = historyEntry.getEntryMapping();
-        entryMapping.setType(EntityType.EDITION_REQUEST);
-        entryMapping.setEntityId(id);
-
-        RoomInfo roomInfo = historyEntry.getRoomInfo();
-        roomInfo.setBuildingNumber(room.getBuildingNumber());
-        roomInfo.setRoomNumber(room.getRoomNumber());
-
-        historyEntry.setUserInfo(userInfo);
-        historyEntry.setEntryMapping(entryMapping);
-        historyEntry.setEventName(eventName);
-
-        switch (status) {
-            case AWAITING_APPROVAL:
-                historyEntry.setStatus(EntryStatus.AWAITING_APPROVAL);
-                break;
-            case APPROVED:
-                historyEntry.setStatus(EntryStatus.APPROVED);
-                break;
-            case DENIED:
-                historyEntry.setStatus(EntryStatus.DENIED);
-                break;
-            case CANCELED:
-                historyEntry.setStatus(EntryStatus.CANCELED);
-                break;
-        }
-
-        historyEntry.setDate(date);
-        historyEntry.setStartTime(startTime);
-        historyEntry.setEndTime(endTime);
-
-        return historyEntry;
-    }
-
 }
