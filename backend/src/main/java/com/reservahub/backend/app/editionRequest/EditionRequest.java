@@ -5,10 +5,7 @@ import java.time.LocalTime;
 
 import com.reservahub.backend.app.reservation.Reservation;
 import com.reservahub.backend.app.room.Room;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntityType;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryMapping;
-import com.reservahub.backend.app.userHistory.dto.UserHistoryEntryDTO.EntryStatus;
+import com.reservahub.backend.app.user.User;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -39,6 +36,9 @@ public class EditionRequest {
     @Column(length = 32)
     private EditionRequestStatus status;
     @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+    @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "id")
     private Room room;
     @Column(length = 64)
@@ -58,40 +58,4 @@ public class EditionRequest {
         DENIED,
         CANCELED
     }
-
-    public UserHistoryEntryDTO convertToUserHistoryEntry() {
-        UserHistoryEntryDTO historyEntry = new UserHistoryEntryDTO();
-
-        EntryMapping mapping = historyEntry.getEntryMapping();
-        mapping.setType(EntityType.EDITION_REQUEST);
-        mapping.setEntityId(id);
-
-        historyEntry.setEntryMapping(mapping);
-
-        historyEntry.setEventName(eventName);
-
-        switch (status) {
-            case AWAITING_APPROVAL:
-            historyEntry.setStatus(EntryStatus.AWAITING_APPROVAL);
-            break;
-            case APPROVED:
-            historyEntry.setStatus(EntryStatus.APPROVED);
-            break;
-            case DENIED:
-            historyEntry.setStatus(EntryStatus.DENIED);
-            break;
-            case CANCELED:
-            historyEntry.setStatus(EntryStatus.CANCELED);
-            break;
-        }
-
-        historyEntry.setRoomNumber(room.getRoomNumber());
-        historyEntry.setBuildingNumber(room.getBuildingNumber());
-        historyEntry.setDate(date);
-        historyEntry.setStartTime(startTime);
-        historyEntry.setEndTime(endTime);
-
-        return historyEntry;
-    }
-    
 }

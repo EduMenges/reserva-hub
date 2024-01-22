@@ -32,7 +32,7 @@ public class Room {
     @ElementCollection(targetClass = ResourceEnum.class)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "room_resources")
-    @Column(name = "room_type")
+    @Column(name = "resource")
     private Set<ResourceEnum> resources;
 
     public enum RoomEnum {
