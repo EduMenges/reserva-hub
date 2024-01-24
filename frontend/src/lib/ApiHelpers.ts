@@ -23,7 +23,7 @@ export const call = async <S, E>(
     const headers = new Headers([["Content-Type", "application/json"]]);
 
     if (token) {
-        headers.set("Authorization", `Token ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
     }
 
     const reqData: RequestInit = {

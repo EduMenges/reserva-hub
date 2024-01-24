@@ -5,19 +5,14 @@ import type { PageServerLoad } from "./$types";
 import { message, superValidate } from "sveltekit-superforms/server";
 import { RestMethods } from "$lib/ApiHelpers";
 import { errorSchema, maybeError } from "$lib/schemas";
-import type { Error } from "$lib/ApiTypes";
+import type { Error, User } from "$lib/ApiTypes";
 import { loginSchema } from "$lib/schemas";
 
-const responseSchema = z.object({
-    token: z.string(),
-    tokenType: z.string(),
-    expirationDate: z.date(),
-    role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
-})
+export const load = (async ({ request, locals }) => {
+    if (locals.user) {
+        return redirect(307, "/");
+    }
 
-type Response = z.infer<typeof responseSchema>;
-
-export const load = (async ({ request }) => {
     const form = await superValidate(request, loginSchema.sourceType());
     return { form };
 }) satisfies PageServerLoad;
@@ -30,23 +25,19 @@ export const actions: Actions = {
             return fail(400, { form });
         }
 
-        const body = await api.call<z.infer<(typeof responseSchema)>, Error>(
-            RestMethods.POST,
-            "user/login",
-            JSON.stringify(form.data)
-        );
+        const body = await api.call<User, Error>(RestMethods.POST, "user/login", JSON.stringify(form.data));
 
         const errorBody = maybeError(errorSchema).safeParse(body);
 
         if (errorBody.success) {
-            return message(form, errorBody.data.data, { status: errorBody.data.status })
+            return message(form, errorBody.data.data, { status: errorBody.data.status });
         }
 
-        const okBody = body.data as Response;
+        const okBody = body.data as User;
 
-        const stringUser = JSON.stringify(body.data);
+        const value = btoa(JSON.stringify(okBody));
 
-        cookies.set("jwt", stringUser, { path: "/", expires: okBody.expirationDate });
+        cookies.set("jwt", value, { path: "/" });
 
         return redirect(307, "/");
     },

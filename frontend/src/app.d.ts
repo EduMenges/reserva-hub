@@ -7,7 +7,9 @@ import type * as Api from "$lib/ApiTypes";
 declare global {
     namespace App {
         // interface Error {}
-        // interface Locals {}
+        interface Locals {
+            user: Api.User;
+        }
         // interface PageData {}
         // interface PageState {}
         // interface Platform {}

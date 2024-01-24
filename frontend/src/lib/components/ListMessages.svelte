@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { type Error } from "$lib/ApiTypes";
-
-    export let message: Error | undefined;
+    import * as Api from "$lib/ApiTypes"
+    export let message: Api.Error | undefined;
 </script>
 
 {#if message}
