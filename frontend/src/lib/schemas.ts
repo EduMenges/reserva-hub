@@ -73,3 +73,43 @@ export const userSchema = z.object({
     expirationDate: z.date(),
     role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
 });
+
+
+namespace schema {
+
+    const userInfo = z.object({
+        username: z.string(),
+        userId: z.bigint(),
+        role: z.string()
+    })
+
+    const roomInfo = z.object({
+        roomNumber: z.string(),
+        buildingNumber: z.string()
+    })
+
+    const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"])
+
+    const entryStatus = z.enum(["ACTIVE",
+        "EXPIRED",
+        "CANCELED",
+        "AWAITING_APPROVAL",
+        "APPROVED",
+        "DENIED"])
+
+    const entryMaping = z.object({
+        type: entityType,
+        entityId: z.number()
+    })
+
+    export const userHistoryEntry = z.object({
+        userInfo,
+        roomInfo,
+        entryMaping,
+        eventName: z.string(),
+        status: entryStatus,
+        date: z.string().datetime(),
+        startTime: z.string(),
+        endTime: z.string(),
+    })
+}
