@@ -70,7 +70,7 @@ export const loginSchema = zfd.formData({
 export const userSchema = z.object({
     token: z.string(),
     tokenType: z.string(),
-    expirationDate: z.date(),
+    expirationDate: z.coerce.date(),
     role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
 });
 

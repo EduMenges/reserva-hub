@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { message, superValidate } from "sveltekit-superforms/server";
 import { RestMethods } from "$lib/ApiHelpers";
-import { errorSchema, maybeError } from "$lib/schemas";
+import { errorSchema, maybeError, userSchema } from "$lib/schemas";
 import type { Error, User } from "$lib/ApiTypes";
 import { loginSchema } from "$lib/schemas";
 
@@ -18,7 +18,7 @@ export const load = (async ({ request, locals }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-    login: async ({ request, cookies }) => {
+    default: async ({ request, cookies }) => {
         const form = await superValidate(request, loginSchema.sourceType());
 
         if (!form.valid) {
@@ -33,15 +33,12 @@ export const actions: Actions = {
             return message(form, errorBody.data.data, { status: errorBody.data.status });
         }
 
-        const okBody = body.data as User;
+        const user = userSchema.parse(body.data);
 
-        const value = btoa(JSON.stringify(okBody));
+        const value = btoa(JSON.stringify(user));
 
-        cookies.set("jwt", value, { path: "/" });
+        cookies.set("jwt", value, { path: "/", expires: user.expirationDate });
 
         return redirect(307, "/");
-    },
-    as_admin: () => {
-        return redirect(303, "/admin");
-    },
+    }
 };

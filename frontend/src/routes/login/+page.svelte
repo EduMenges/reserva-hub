@@ -45,8 +45,7 @@
         </div>
 
         <div class="d-flex justify-content-between flex-wrap">
-            <button type="submit" class="btn btn-primary" formaction="?/login">Entrar</button>
-            <button type="submit" class="btn btn-danger" formaction="?/as_admin">Entrar como administrador</button>
+            <button type="submit" class="btn btn-primary ">Entrar</button>
         </div>
     </form>
 </SmallContainer>

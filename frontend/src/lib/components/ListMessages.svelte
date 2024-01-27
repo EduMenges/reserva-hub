@@ -1,5 +1,5 @@
 <script lang="ts">
-    import * as Api from "$lib/ApiTypes"
+    import type * as Api from "$lib/ApiTypes"
     export let message: Api.Error | undefined;
 </script>
 
