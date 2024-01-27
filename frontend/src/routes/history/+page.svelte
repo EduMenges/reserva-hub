@@ -1,6 +1,5 @@
 <script lang="ts">
   import StatusColored from "$lib/components/StatusColored.svelte";
-  import { Status } from "$lib/schemas";
   import type { PageServerData } from "./$types";
   export let data: PageServerData;
 
@@ -9,7 +8,7 @@
   }
 </script>
 
-{#if data.bookings.length > 0}
+{#if data.history.length > 0}
   <section class="table-responsive">
     <table class="table table-hover table-striped">
       <thead>
@@ -23,25 +22,25 @@
         </tr>
       </thead>
       <tbody>
-        {#each data.bookings as booking (booking.startDate)}
+        {#each data.history as entry (entry.startDate)}
           <tr>
             <td>
-              {booking.startDate.toLocaleDateString()}
+              {entry.startDate.toLocaleDateString()}
             </td>
             <td>
-              {hours(booking.startDate)} — {hours(booking.endDate)}
+              {hours(entry.startDate)} — {hours(entry.endDate)}
             </td>
             <td>
-              {booking.name}
+              {entry.name}
             </td>
             <td>
-              {booking.room}
+              {entry.roomInfo.buildingNumber} — {entry.roomInfo.roomNumber}
             </td>
             <td>
-              <StatusColored status={booking.status} />
+              <StatusColored status={entry.status} />
             </td>
             <td>
-              <button class="btn btn-secondary" disabled={booking.status === Status.Canceled}>Editar</button>
+              <button class="btn btn-secondary" disabled={entry.status !== "AWAITING_APPROVAL"}>Editar</button>
             </td>
           </tr>
         {/each}

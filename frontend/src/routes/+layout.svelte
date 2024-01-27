@@ -43,8 +43,10 @@
             <NavItem>
                 <UserBadge user={data.user} />
             </NavItem>
-                <NavItem>
-                    <Button color="danger">Sair</Button>
+                <NavItem>				
+                    	<a class="btn btn-danger" data-sveltekit-reload href="/sign-out" role="button"
+                    >Sair</a
+                >
                     </NavItem>
             {/if}
         </Nav>

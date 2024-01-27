@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { zfd } from "zod-form-data";
 
-export enum Status {
-    Pending = "Pending",
-    Confirmed = "Confirmed",
-    Canceled = "Canceled",
-}
-
 export function isValidZodLiteralUnion<T extends z.ZodLiteral<unknown>>(literals: T[]): literals is [T, T, ...T[]] {
     return literals.length >= 2;
 }
@@ -40,17 +34,6 @@ export function maybeError(errorSchema: z.AnyZodObject) {
     return z.object({ data: errorSchema, status: errorCodesSchema });
 }
 
-export const bookingSchema = z.object({
-    startDate: z.date(),
-    endDate: z.date(),
-    name: z.string(),
-    description: z.string(),
-    room: z.string(),
-    status: z.nativeEnum(Status),
-});
-
-export type BookingType = z.infer<typeof bookingSchema>;
-
 export const roomSchema = z.object({
     name: z.string(),
     building: z.string(),
@@ -75,12 +58,13 @@ export const userSchema = z.object({
 });
 
 
-namespace schema {
+export namespace schema {
+    const role = z.enum(["STUDENT", "TEATCHER", "ADMIN"]);
 
     const userInfo = z.object({
         username: z.string(),
-        userId: z.bigint(),
-        role: z.string()
+        userId: z.number(),
+        role
     })
 
     const roomInfo = z.object({
@@ -97,7 +81,9 @@ namespace schema {
         "APPROVED",
         "DENIED"])
 
-    const entryMaping = z.object({
+    export type EntryStatus = z.infer<typeof entryStatus>;
+
+    const entryMapping = z.object({
         type: entityType,
         entityId: z.number()
     })
@@ -105,11 +91,11 @@ namespace schema {
     export const userHistoryEntry = z.object({
         userInfo,
         roomInfo,
-        entryMaping,
+        entryMapping,
         eventName: z.string(),
         status: entryStatus,
-        date: z.string().datetime(),
+        date: z.string(),
         startTime: z.string(),
         endTime: z.string(),
-    })
+    }).array()
 }
