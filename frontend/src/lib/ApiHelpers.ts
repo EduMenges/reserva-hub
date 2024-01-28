@@ -27,7 +27,7 @@ export const call = async <S, E>(
     }
 
     const reqData: RequestInit = {
-        ...(!(method === RestMethods.GET) ? { body } : {}),
+        body,
         method,
         headers,
     };
@@ -49,3 +49,7 @@ export const call = async <S, E>(
             throw error(err);
         });
 };
+
+export const get = async<S, E>(path: string, args: string, token?: string) => {
+    return call<S, E>(RestMethods.GET, path + args, undefined, token);
+}

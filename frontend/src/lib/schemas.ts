@@ -34,30 +34,26 @@ export function maybeError(errorSchema: z.AnyZodObject) {
     return z.object({ data: errorSchema, status: errorCodesSchema });
 }
 
-export const roomSchema = z.object({
-    name: z.string(),
-    building: z.string(),
-    vacancy: z.number(),
-});
-
 export const okStatusSchema = z.number().min(100).max(399);
 export const errorStatusSchema = z.number().min(400).max(599);
-
-export type RoomType = z.infer<typeof roomSchema>;
 
 export const loginSchema = zfd.formData({
     username: zfd.text(z.string({ required_error: "Seu nome de usuário é necessário" })),
     password: zfd.text(z.string({ required_error: "Sua senha é necessária" })),
 });
 
-export const userSchema = z.object({
-    token: z.string(),
-    tokenType: z.string(),
-    expirationDate: z.coerce.date(),
-    role: z.union([z.literal("STUDENT"), z.literal("ADMIN")]),
-});
-
-
+export namespace forms {
+    export const roomFilter = zfd.formData({
+        roomNumber: zfd.text().optional(),
+        buildingNumber: zfd.text().optional(),
+        roomType: zfd.text().optional(),
+        capacity: zfd.numeric(z.number().min(1).default(1)),
+        startTime: zfd.text().optional(),
+        endTime: zfd.text().optional(),
+        date: zfd.text(z.coerce.date()).optional(),
+        resources: zfd.text().array().optional()
+    })
+}
 export namespace schema {
     const role = z.enum(["STUDENT", "TEATCHER", "ADMIN"]);
 
@@ -74,14 +70,19 @@ export namespace schema {
 
     const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"])
 
+    export const user = z.object({
+        token: z.string(),
+        tokenType: z.string(),
+        expirationDate: z.coerce.date(),
+        role,
+    });
+
     const entryStatus = z.enum(["ACTIVE",
         "EXPIRED",
         "CANCELED",
         "AWAITING_APPROVAL",
         "APPROVED",
         "DENIED"])
-
-    export type EntryStatus = z.infer<typeof entryStatus>;
 
     const entryMapping = z.object({
         type: entityType,
@@ -97,5 +98,14 @@ export namespace schema {
         date: z.string(),
         startTime: z.string(),
         endTime: z.string(),
+    }).array();
+
+    export const rooms = z.object({
+        id: z.number(),
+        roomNumber: z.string(),
+        buildingNumber: z.string(),
+        type: z.string(),
+        capacity: z.number(),
+        resources: z.string().array()
     }).array()
 }

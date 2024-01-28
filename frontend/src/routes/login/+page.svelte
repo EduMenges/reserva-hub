@@ -1,6 +1,5 @@
 <script lang="ts">
     import Logo from "$lib/components/Logo.svelte";
-    import { enhance } from "$app/forms";
     import SmallContainer from "$lib/components/SmallContainer.svelte";
     import type { PageData } from "./$types";
     import { superForm } from "sveltekit-superforms/client";
@@ -9,7 +8,7 @@
 
     export let data: PageData;
 
-    const { form, errors, constraints, message } = superForm(data.form);
+    const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
 <svelte:head>
