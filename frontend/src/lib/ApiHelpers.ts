@@ -50,6 +50,6 @@ export const call = async <S, E>(
         });
 };
 
-export const get = async<S, E>(path: string, args: string, token?: string) => {
+export const get = async<S, E>(path: string, args?: string, token?: string) => {
     return call<S, E>(RestMethods.GET, path + args, undefined, token);
 }

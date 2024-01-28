@@ -55,7 +55,7 @@ export namespace forms {
     })
 }
 export namespace schema {
-    const role = z.enum(["STUDENT", "TEATCHER", "ADMIN"]);
+    const role = z.enum(["STUDENT", "TEACHER", "ADMIN"]);
 
     const userInfo = z.object({
         username: z.string(),
@@ -68,7 +68,7 @@ export namespace schema {
         buildingNumber: z.string()
     })
 
-    const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"])
+    export const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"])
 
     export const user = z.object({
         token: z.string(),

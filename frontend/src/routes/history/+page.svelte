@@ -1,11 +1,8 @@
 <script lang="ts">
     import StatusColored from "$lib/components/StatusColored.svelte";
+    import { hours } from "$lib/utils";
     import type { PageServerData } from "./$types";
     export let data: PageServerData;
-
-    function hours(date: Date) {
-        return date.toLocaleTimeString([], { timeStyle: "short" });
-    }
 </script>
 
 {#if data.history.length > 0}

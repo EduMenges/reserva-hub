@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { schema } from "$lib/schemas";
+    import type { EntryStatus } from "$lib/ApiTypes";
 
-    export let status: schema.EntryStatus;
+    export let status: EntryStatus;
 </script>
 
 {#if status === "APPROVED"}
@@ -14,4 +14,6 @@
 <span class="text-success-emphasis">Ativo</span>
 {:else if status === "DENIED"}
 <span class="text-danger-emphasis">Negado</span>
+{:else if status === "EXPIRED"}
+<span class="text-danger-emphasis">Expirado</span>
 {/if}

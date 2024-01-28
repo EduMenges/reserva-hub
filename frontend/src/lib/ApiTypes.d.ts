@@ -13,3 +13,7 @@ export type User = z.infer<typeof schema.user>;
 export type Rooms = z.infer<typeof schema.rooms>;
 
 export type EntryStatus = z.infer<typeof schema.entryStatus>;
+
+export type History = z.infer<typeof schema.userHistoryEntry>;
+
+export type Entity = z.infer<typeof schema.entityType>;
