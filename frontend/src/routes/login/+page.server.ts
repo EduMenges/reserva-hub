@@ -27,10 +27,8 @@ export const actions: Actions = {
 
         const body = await api.call<User, Error>(RestMethods.POST, "user/login", JSON.stringify(form.data));
 
-        const errorBody = maybeError(errorSchema).safeParse(body);
-
-        if (errorBody.success) {
-            return message(form, errorBody.data.data, { status: errorBody.data.status });
+        if ("error" in body) {
+            return message(form, body.error, { status: body.status });
         }
 
         const user = schema.user.parse(body.data);

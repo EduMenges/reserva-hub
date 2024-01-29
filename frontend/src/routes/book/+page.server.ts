@@ -18,9 +18,8 @@ export const load = (async ({ locals, request, url }) => {
 
     const body = await get<Rooms, Error>("room/filter", url.search, locals.user.token);
 
-    const errc = errorCodesSchema.safeParse(body.status);
-    if (errc.success) {
-        throw error(errc.data);
+    if ("error" in body) {
+        throw error(body.status, body.error);
     }
 
     const rooms = schema.rooms.parse(body.data);

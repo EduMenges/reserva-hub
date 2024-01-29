@@ -1,9 +1,5 @@
-import { RestMethods, call } from "$lib/ApiHelpers";
-import { schema } from "$lib/schemas";
 import type { PageServerLoad } from "./$types";
-import { errorCodesSchema } from "$lib/schemas";
 import { error } from "@sveltejs/kit";
-import type { History } from "$lib/ApiTypes";
 import { GetHistory } from "$lib/ApiEndpoints";
 
 export const load = (async ({ locals }) => {
