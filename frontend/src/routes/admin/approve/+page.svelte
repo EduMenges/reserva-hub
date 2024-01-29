@@ -17,12 +17,11 @@
                 <th scope="col">Nome</th>
                 <th scope="col">Sala</th>
                 <th scope="col">Tipo</th>
-                <th scope="col">Aprovar</th>
-                <th scope="col">Negar</th>
+                <th scope="col">Ações</th>
             </tr>
         </thead>
         <tbody>
-            {#each data.history.filter((entry) => entry.status === "AWAITING_APPROVAL") as entry (entry.startTime)}
+            {#each data.history.filter((entry) => entry.status === "AWAITING_APPROVAL") as entry}
                 <tr>
                     <td>
                         {entry.userInfo.username}
@@ -43,13 +42,11 @@
                         {readableEntityType(entry.entryMapping.type)}
                     </td>
                     <td>
-                        <form method="post" use:enhance action="?/post-approve">
-                            <button class="btn btn-success" type="submit">aaa </button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post" use:enhance action="?/post-delete">
-                            <button class="btn btn-danger" type="submit">aaa</button>
+                        <form method="post" use:enhance>
+                            <input readonly name="entityId" value={entry.entryMapping.entityId} hidden />
+                            <input readonly name="userId" value={entry.userInfo.userId} hidden />
+                            <button class="btn btn-success" type="submit" formaction="?/postApprove">Aprovar</button>
+                            <button class="btn btn-danger" type="submit" formaction="?/postDelete">Negar</button>
                         </form>
                     </td>
                 </tr>

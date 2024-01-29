@@ -4,6 +4,7 @@
     import type { PageData } from "./$types";
     import ListErrors from "$lib/components/ListErrors.svelte";
     import { resolveRoute } from "$app/paths";
+    import ListMessages from "$lib/components/ListMessages.svelte";
 
     export let data: PageData;
     const { enhance, form, errors, constraints, message } = superForm(data.form);
@@ -13,11 +14,14 @@
     <title>Buscar sala</title>
 </svelte:head>
 
+{#if data?.user?.role === "STUDENT"}
 <div class="alert alert-warning mb-3" role="alert">
     Reservas realizadas por alunos necessitam da aprovação de um administrador.
 </div>
+{/if}
 
-<form class="was-validated" method="get" action="?/search" use:enhance>
+<form class="was-validated" method="get" action="?/search">
+    <ListMessages message={$message} />
     <fieldset name="horario">
         <legend>Horário</legend>
 

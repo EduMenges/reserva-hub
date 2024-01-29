@@ -19,7 +19,7 @@ export const call = async <S, E>(
     path: string,
     body?: JSONData,
     token?: AuthToken
-): Promise<{ status: OkCodes, data: S } | { status: ErrorCodes, data: E }> => {
+): Promise<{ status: OkCodes, data: S } | { status: ErrorCodes, error: E }> => {
     const headers = new Headers([["Content-Type", "application/json"]]);
 
     if (token) {
@@ -40,7 +40,7 @@ export const call = async <S, E>(
             const data = text ? JSON.parse(text) : {};
 
             if (response.status in errorCodes) {
-                return { status: response.status as ErrorCodes, data: data as E };
+                return { status: response.status as ErrorCodes, error: data as E };
             }
 
             return { status: response.status as OkCodes, data: data as S };
