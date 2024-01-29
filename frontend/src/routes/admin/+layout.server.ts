@@ -10,6 +10,14 @@ export const load = (async ({ locals }) => {
     const history = await GetHistory(locals.user?.token as string);
 
     return {
-        history
+        history: history.map((entry) => ({
+            userInfo: entry.userInfo,
+            roomInfo: entry.roomInfo,
+            entryMapping: entry.entryMapping,
+            eventName: entry.eventName,
+            status: entry.status,
+            startDate: new Date(`${entry.date}T${entry.startTime}`),
+            endDate: new Date(`${entry.date}T${entry.endTime}`),
+        })),
     };
 }) satisfies LayoutServerLoad;

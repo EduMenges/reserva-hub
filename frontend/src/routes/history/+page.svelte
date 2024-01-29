@@ -3,6 +3,8 @@
     import { hours } from "$lib/utils";
     import type { PageServerData } from "./$types";
     export let data: PageServerData;
+    import Date from "$lib/components/table/Date.svelte";
+    import TimeSpan from "$lib/components/table/TimeSpan.svelte";
 </script>
 
 {#if data.history.length > 0}
@@ -22,10 +24,10 @@
                 {#each data.history as entry (entry.startDate)}
                     <tr>
                         <td>
-                            {entry.startDate.toLocaleDateString()}
+                            <Date date={entry.startDate} />
                         </td>
                         <td>
-                            {hours(entry.startDate)} — {hours(entry.endDate)}
+                            <TimeSpan endTime={entry.endDate} startTime={entry.startDate}/>
                         </td>
                         <td>
                             {entry.name}

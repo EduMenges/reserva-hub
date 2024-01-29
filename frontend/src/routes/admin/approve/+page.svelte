@@ -1,12 +1,18 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
+    import Date from "$lib/components/table/Date.svelte";
+    import TimeSpan from "$lib/components/table/TimeSpan.svelte";
     import { readableEntityType } from "$lib/utils";
 
     export let data;
+    let entriesWaitingApproval = data.history.filter((entry) => entry.status === "AWAITING_APPROVAL");
 </script>
 
-<svelte:head>Aprovar reservas</svelte:head>
+<svelte:head>
+    <title>Aprovar Reservas</title>
+</svelte:head>
 
+{#if entriesWaitingApproval.length > 0}
 <section class="table-responsive">
     <table class="table table-hover table-striped">
         <thead>
@@ -21,17 +27,13 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.history.filter((entry) => entry.status === "AWAITING_APPROVAL") as entry}
+            {#each entriesWaitingApproval as entry}
                 <tr>
                     <td>
                         {entry.userInfo.username}
                     </td>
-                    <td>
-                        {entry.date}
-                    </td>
-                    <td>
-                        {entry.startTime.slice(0, 5)} — {entry.endTime.slice(0, 5)}
-                    </td>
+                    <Date date={entry.startDate} />
+                    <TimeSpan startTime={entry.startDate} endTime={entry.endDate} />
                     <td>
                         {entry.eventName}
                     </td>
@@ -54,3 +56,6 @@
         </tbody>
     </table>
 </section>
+{:else}
+<p class="text-center">Não há reservas esperando aprovação.</p>
+{/if}
