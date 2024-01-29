@@ -2,13 +2,23 @@
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
 
-    import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler } from "@sveltestrap/sveltestrap";
+    import {
+        Badge,
+        Button,
+        Collapse,
+        Nav,
+        Navbar,
+        NavbarBrand,
+        NavbarToggler,
+        NavItem,
+    } from "@sveltestrap/sveltestrap";
 
     import "../app.scss";
 
-    import type { PageData } from "./$types";
     import { autoMode, type ThemeOption } from "$lib/components/ThemeButton";
     import ThemeButton from "$lib/components/ThemeButton.svelte";
+    import type { LayoutData } from "./$types";
+    import UserBadge from "$lib/components/UserBadge.svelte";
 
     onMount(async () => {
         if (!browser) return;
@@ -20,15 +30,25 @@
 
     let appTheme: ThemeOption = autoMode;
 
-    export let data: PageData;
+    export let data: LayoutData;
 </script>
 
 <Navbar expand="sm" sticky="top" container="sm" color="primary" class="mb-3">
     <NavbarBrand href="/">Início</NavbarBrand>
     <NavbarToggler on:click={() => (isOpen = !isOpen)} />
-    <Collapse navbar expand="sm" {isOpen} class="justify-content-between">
-        <Nav navbar>
+    <Collapse navbar expand="sm" {isOpen} class="justify-content-end">
+        <Nav navbar class="align-items-center gap-2">
             <ThemeButton bind:selected={appTheme} />
+            {#if data.user}
+            <NavItem>
+                <UserBadge user={data.user} />
+            </NavItem>
+                <NavItem>				
+                    	<a class="btn btn-danger" data-sveltekit-reload href="/sign-out" role="button"
+                    >Sair</a
+                >
+                    </NavItem>
+            {/if}
         </Nav>
     </Collapse>
 </Navbar>

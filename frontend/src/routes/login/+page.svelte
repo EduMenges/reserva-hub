@@ -1,15 +1,14 @@
 <script lang="ts">
     import Logo from "$lib/components/Logo.svelte";
-    import { enhance } from "$app/forms";
     import SmallContainer from "$lib/components/SmallContainer.svelte";
     import type { PageData } from "./$types";
     import { superForm } from "sveltekit-superforms/client";
-    import SuperDebug from "sveltekit-superforms/client/SuperDebug.svelte";
     import ListErrors from "$lib/components/ListErrors.svelte";
+    import ListMessages from "$lib/components/ListMessages.svelte";
 
     export let data: PageData;
 
-    const { form, errors, constraints } = superForm(data.form);
+    const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
 <svelte:head>
@@ -23,6 +22,8 @@
     </header>
 
     <form class="card-body was-validated" method="post" use:enhance>
+        <ListMessages message={$message} />
+
         <div class="mb-3">
             <label class="form-label" for="username">Usuário</label>
             <input
@@ -38,19 +39,12 @@
 
         <div class="mb-3">
             <label class="form-label" for="password">Senha</label>
-            <input
-                id="password"
-                class="form-control"
-                type="password"
-                name="password"
-                {...$constraints.password}
-            />
+            <input id="password" class="form-control" type="password" name="password" {...$constraints.password} />
             <ListErrors errors={$errors.password} />
         </div>
 
         <div class="d-flex justify-content-between flex-wrap">
-            <button type="submit" class="btn btn-primary" formaction="?/login">Entrar</button>
-            <button type="submit" class="btn btn-danger" formaction="?/as_admin">Entrar como administrador</button>
+            <button type="submit" class="btn btn-primary ">Entrar</button>
         </div>
     </form>
 </SmallContainer>

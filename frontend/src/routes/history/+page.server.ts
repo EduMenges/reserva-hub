@@ -1,24 +1,21 @@
-import { Status, type BookingType } from '$lib/schemas';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from "./$types";
+import { error } from "@sveltejs/kit";
+import { GetHistory } from "$lib/ApiEndpoints";
 
-export const load = (async () => {
+export const load = (async ({ locals }) => {
+    if (!locals.user) {
+        throw error(401);
+    }
+
+    const history = await GetHistory(locals.user.token);
+
     return {
-        bookings: [{
-            description: "",
-            name: "Festa cristã",
-            status: Status.Confirmed,
-            room: "Anfiteatro",
-            startDate: new Date(Date.now()),
-            endDate: new Date(Date.now() + 100),
-        },
-            {
-                description: "",
-                name: "Festa satânica",
-                status: Status.Canceled,
-                room: "Instituto de Ciências Humanas",
-                startDate: new Date(666),
-                endDate: new Date(999999)
-        }
-        ]
+        history: history.map(entry => ({
+            status: entry.status,
+            roomInfo: entry.roomInfo,
+            startDate: new Date(`${entry.date}T${entry.startTime}`),
+            endDate: new Date(`${entry.date}T${entry.endTime}`),
+            name: entry.eventName
+        }))
     };
-}) satisfies PageServerLoad<{ bookings: BookingType[] }>;
+}) satisfies PageServerLoad;
