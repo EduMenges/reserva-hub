@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { PageServerLoad } from "./$types";
 import { message, superValidate } from "sveltekit-superforms/server";
 import { RestMethods } from "$lib/ApiHelpers";
-import { errorSchema, maybeError, userSchema } from "$lib/schemas";
+import { errorSchema, maybeError, schema } from "$lib/schemas";
 import type { Error, User } from "$lib/ApiTypes";
 import { loginSchema } from "$lib/schemas";
 
@@ -33,7 +33,7 @@ export const actions: Actions = {
             return message(form, errorBody.data.data, { status: errorBody.data.status });
         }
 
-        const user = userSchema.parse(body.data);
+        const user = schema.user.parse(body.data);
 
         const value = btoa(JSON.stringify(user));
 

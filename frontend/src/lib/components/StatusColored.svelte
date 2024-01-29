@@ -5,15 +5,15 @@
 </script>
 
 {#if status === "APPROVED"}
-<span class="text-success-emphasis">Aprovado</span>
+    <span class="text-success-emphasis">Aprovado</span>
 {:else if status === "AWAITING_APPROVAL"}
-<span class="text-warning-emphasis">Aguardando aprovação</span>
+    <span class="text-warning-emphasis">Aguardando aprovação</span>
 {:else if status === "CANCELED"}
-<span class="text-danger-emphasis">Cancelado</span>
+    <span class="text-danger-emphasis">Cancelado</span>
 {:else if status === "ACTIVE"}
-<span class="text-success-emphasis">Ativo</span>
+    <span class="text-success-emphasis">Ativo</span>
 {:else if status === "DENIED"}
-<span class="text-danger-emphasis">Negado</span>
+    <span class="text-danger-emphasis">Negado</span>
 {:else if status === "EXPIRED"}
-<span class="text-danger-emphasis">Expirado</span>
+    <span class="text-danger-emphasis">Expirado</span>
 {/if}

@@ -31,7 +31,7 @@
                         {entry.date}
                     </td>
                     <td>
-                        {entry.startTime} — {entry.endTime}
+                        {entry.startTime.slice(0, 5)} — {entry.endTime.slice(0, 5)}
                     </td>
                     <td>
                         {entry.eventName}
@@ -43,13 +43,13 @@
                         {readableEntityType(entry.entryMapping.type)}
                     </td>
                     <td>
-                        <form method="post" use:enhance>
-                            <button class="btn btn-success">aa </button>
+                        <form method="post" use:enhance action="?/post-approve">
+                            <button class="btn btn-success" type="submit">aaa </button>
                         </form>
                     </td>
                     <td>
-                        <form method="post" use:enhance >
-                            <button class="btn btn-danger">aa</button>
+                        <form method="post" use:enhance action="?/post-delete">
+                            <button class="btn btn-danger" type="submit">aaa</button>
                         </form>
                     </td>
                 </tr>

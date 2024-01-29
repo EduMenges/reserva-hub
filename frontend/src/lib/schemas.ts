@@ -42,15 +42,18 @@ export const loginSchema = zfd.formData({
     password: zfd.text(z.string({ required_error: "Sua senha é necessária" })),
 });
 
+const localDateRegex = /\d{4}-\d{2}-\d{2}/gm;
+const localTimeRegex = /\d{2}:\d{2}:\d{2}/gm;
+
 export namespace forms {
     export const roomFilter = zfd.formData({
         roomNumber: zfd.text().optional(),
         buildingNumber: zfd.text().optional(),
         roomType: zfd.text().optional(),
         capacity: zfd.numeric(z.number().min(1).default(1)),
-        startTime: zfd.text().optional(),
-        endTime: zfd.text().optional(),
-        date: zfd.text(z.coerce.date()).optional(),
+        startTime: zfd.text(z.string().regex(localTimeRegex)).optional(),
+        endTime: zfd.text(z.string().regex(localTimeRegex)).optional(),
+        date: zfd.text(z.string().regex(localDateRegex)).optional(),
         resources: zfd.text().array().optional()
     })
 }
@@ -95,9 +98,9 @@ export namespace schema {
         entryMapping,
         eventName: z.string(),
         status: entryStatus,
-        date: z.string(),
-        startTime: z.string(),
-        endTime: z.string(),
+        date: z.string().regex(localDateRegex),
+        startTime: z.string().regex(localTimeRegex),
+        endTime: z.string().regex(localTimeRegex),
     }).array();
 
     export const rooms = z.object({

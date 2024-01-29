@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.history.filter(entry => entry.status !== "AWAITING_APPROVAL") as entry (entry.startTime)}
+            {#each data.history.filter(entry => entry.status !== "AWAITING_APPROVAL") as entry}
                 <tr>
                     <td>
                         {entry.userInfo.username}
@@ -26,7 +26,7 @@
                         {entry.date}
                     </td>
                     <td>
-                        {entry.startTime} — {entry.endTime}
+                        {entry.startTime.slice(0, 5)} — {entry.endTime.slice(0, 5)}
                     </td>
                     <td>
                         {entry.eventName}

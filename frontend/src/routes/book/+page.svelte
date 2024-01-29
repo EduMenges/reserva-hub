@@ -120,7 +120,7 @@
   
 <h1>Escolha a sala reserva</h1>
 {#if data.rooms.length > 0}
-  <form use:enhance action="?/allocate-room" method="post">
+  <form use:enhance action="?/allocateRoom" method="post">
     <fieldset>
       <legend>Salas disponíveis</legend>
       {#each data.rooms as room}

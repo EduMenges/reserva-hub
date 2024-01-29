@@ -35,5 +35,8 @@ export const actions: Actions = {
         if (!form.valid) {
             return fail(400, { form });
         }
+    },
+    allocateRoom: async ({ request }) => {
+        throw error(501);
     }
 }
