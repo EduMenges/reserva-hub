@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.reservahub.backend.app.reservation.dto.ChangeStatusReservationRequestDto;
 import com.reservahub.backend.app.reservation.dto.ReservationRequestDto;
 import com.reservahub.backend.app.reservation.dto.ReservationResponseDto;
 import com.reservahub.backend.app.user.UserDetails;
@@ -28,5 +29,25 @@ public class ReservationController {
         Reservation emitedRequest = reservationService.saveReservation(userDetails, request);
 
         return ResponseEntity.ok(new ReservationResponseDto(emitedRequest.getId(), emitedRequest.getEventName(), emitedRequest.getStatus().name()));
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/approve")
+    public ResponseEntity<ReservationResponseDto> approveReservation(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ChangeStatusReservationRequestDto changeStatusReservationRequest) {
+        Reservation approvedReservation = reservationService.approveReservation(userDetails, changeStatusReservationRequest.getReservationId());
+
+        return ResponseEntity.ok(new ReservationResponseDto(approvedReservation.getId(), approvedReservation.getEventName(), approvedReservation.getStatus().name()));
+    }
+
+    @PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER') or hasAuthority('ADMIN')")
+    @PostMapping("/cancel")
+    public ResponseEntity<ReservationResponseDto> cancelReservation(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody ChangeStatusReservationRequestDto changeStatusReservationRequest) {
+        Reservation canceledReservation = reservationService.cancelReservation(userDetails, changeStatusReservationRequest.getReservationId());
+
+        return ResponseEntity.ok(new ReservationResponseDto(canceledReservation.getId(), canceledReservation.getEventName(), canceledReservation.getStatus().name()));
     }
 }
