@@ -1,6 +1,7 @@
 package com.reservahub.backend.app.reservation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,6 +32,26 @@ public class ReservationService {
     private UserRepository userRepository;
 
     @Transactional
+    public Reservation cancelReservation(UserDetails userDetails, Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        if(reservation.getUser().getId() != userDetails.getId() && userDetails.getAuthorityName() != User.RoleEnum.ADMIN.name()){
+            throw new EntityNotFoundException("Reservation not found");
+        }
+        reservation.setStatus(ReservationStatus.CANCELED);
+        return reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public Reservation approveReservation(UserDetails userDetails, Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        if(userDetails.getAuthorityName() != User.RoleEnum.ADMIN.name()){
+            throw new AccessDeniedException("role not allowed to approve reservations");
+        }
+        reservation.setStatus(ReservationStatus.ACTIVE);
+        return reservationRepository.save(reservation);
+    }
+
+    @Transactional
     public Reservation saveReservation(UserDetails userDetails, ReservationRequestDto dto) {
         Room room = findRoom(dto.getRoomId());
         User user = findUser(userDetails.getId());
@@ -42,6 +63,11 @@ public class ReservationService {
         validateRoomAvailability(dto, room);
         Reservation request = buildRequest(user, dto, room, status);
         return reservationRepository.save(request);
+    }
+
+    private Reservation findReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found"));
     }
 
     private Room findRoom(Long roomId) {
