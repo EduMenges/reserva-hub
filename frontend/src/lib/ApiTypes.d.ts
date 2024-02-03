@@ -1,4 +1,4 @@
-import { errorCodesSchema, errorSchema, okCodesSchema, schema } from "./schemas";
+import { errorCodesSchema, errorSchema, okCodesSchema, responses, schema } from "./schemas";
 import type { NumericRange } from "@sveltejs/kit";
 import { z } from "zod";
 
@@ -17,3 +17,12 @@ export type EntryStatus = z.infer<typeof schema.entryStatus>;
 export type History = z.infer<typeof schema.userHistoryEntry>;
 
 export type Entity = z.infer<typeof schema.entityType>;
+
+export enum BootstrapColors {
+    PRIMARY = "primary",
+    SECONDARY = "secondary",
+    SUCCESS = "success",
+    WARNING = "warning",
+    DANGER = "danger",
+    INFO = "info",
+}

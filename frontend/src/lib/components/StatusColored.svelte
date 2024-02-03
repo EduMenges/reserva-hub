@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { EntryStatus } from "$lib/ApiTypes";
-
+    
     export let status: EntryStatus;
 </script>
 

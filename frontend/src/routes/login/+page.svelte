@@ -17,7 +17,7 @@
 
 <SmallContainer class="card">
     <header class="card-header text-center">
-        <Logo />
+        <Logo class="mt-3" />
         <p>Entre com a sua conta pessoal do INF</p>
     </header>
 
@@ -44,7 +44,7 @@
         </div>
 
         <div class="d-flex justify-content-between flex-wrap">
-            <button type="submit" class="btn btn-primary ">Entrar</button>
+            <button type="submit" class="btn btn-primary">Entrar</button>
         </div>
     </form>
 </SmallContainer>
