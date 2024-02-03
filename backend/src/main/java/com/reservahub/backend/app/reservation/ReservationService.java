@@ -34,8 +34,8 @@ public class ReservationService {
     @Transactional
     public Reservation cancelReservation(UserDetails userDetails, Long reservationId) {
         Reservation reservation = findReservation(reservationId);
-        if(reservation.getUser().getId() != userDetails.getId() && userDetails.getAuthorityName() != User.RoleEnum.ADMIN.name()){
-            throw new EntityNotFoundException("Reservation not found");
+        if(reservation.getUser().getId() != userDetails.getId() && !userDetails.getAuthorityName().equals(User.RoleEnum.ADMIN.name())){
+            throw new AccessDeniedException("Acess Denied");
         }
         reservation.setStatus(ReservationStatus.CANCELED);
         return reservationRepository.save(reservation);
@@ -44,8 +44,8 @@ public class ReservationService {
     @Transactional
     public Reservation approveReservation(UserDetails userDetails, Long reservationId) {
         Reservation reservation = findReservation(reservationId);
-        if(userDetails.getAuthorityName() != User.RoleEnum.ADMIN.name()){
-            throw new AccessDeniedException("role not allowed to approve reservations");
+        if(!userDetails.getAuthorityName().equals(User.RoleEnum.ADMIN.name())){
+            throw new AccessDeniedException("Acess Denied");
         }
         reservation.setStatus(ReservationStatus.ACTIVE);
         return reservationRepository.save(reservation);
@@ -60,7 +60,7 @@ public class ReservationService {
         ReservationStatus status = userDetails.getAuthorityName() == User.RoleEnum.STUDENT.name()
                 ? ReservationStatus.AWAITING_APPROVAL
                 : ReservationStatus.ACTIVE;
-        validateRoomAvailability(dto, room);
+        validateRoomAvailability(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
         Reservation request = buildRequest(user, dto, room, status);
         return reservationRepository.save(request);
     }
@@ -80,15 +80,12 @@ public class ReservationService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    private void validateRoomAvailability(ReservationRequestDto dto, Room room) {
-        if (hasConflictsWithActiveReservations(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime())) {
+    private void validateRoomAvailability(Long roomId, LocalDate date, LocalTime startTime,
+    LocalTime endTime) {
+        boolean hasConflict = reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
+        if (hasConflict) {
             throw new RoomAlreadyReservedException();
         }
-    }
-
-    private boolean hasConflictsWithActiveReservations(Long roomId, LocalDate date, LocalTime startTime,
-            LocalTime endTime) {
-        return reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime, endTime);
     }
 
     private Reservation buildRequest(User user, ReservationRequestDto dto, Room room, ReservationStatus status) {
