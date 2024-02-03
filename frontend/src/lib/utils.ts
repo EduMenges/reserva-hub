@@ -5,7 +5,7 @@ export function currentDay() {
 }
 
 export function hours(date: Date) {
-    return date.toLocaleTimeString([], { timeStyle: "short" });
+    return date.toLocaleTimeString([], { timeStyle: "short", hour12: false });
 }
 
 export function readableEntityType(entityType: Api.Entity) {

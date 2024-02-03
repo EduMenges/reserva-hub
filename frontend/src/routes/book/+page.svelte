@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-    <title>Buscar sala</title>
+    <title>Buscar Sala</title>
 </svelte:head>
 
 {#if data?.user?.role === "STUDENT"}
@@ -122,7 +122,7 @@
 
 {#if data.rooms}
   
-<h1>Escolha a sala reserva</h1>
+<h1 class="mt-3">Escolha a sala reserva</h1>
 {#if data.rooms.length > 0}
   <form use:enhance action="?/allocateRoom" method="post">
     <fieldset>

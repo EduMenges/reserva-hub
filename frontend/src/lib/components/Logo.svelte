@@ -6,4 +6,4 @@
   export { className as class };
 </script>
 
-<h1 class={className}>Reserva<span class={`ms-1 rounded p-1 bg-${textColor} text-light`}>Hub</span></h1>
+<h1 class={className}>Reserva<span class={`ms-1 rounded-1 p-1 bg-${textColor} text-light`}>Hub</span></h1>
