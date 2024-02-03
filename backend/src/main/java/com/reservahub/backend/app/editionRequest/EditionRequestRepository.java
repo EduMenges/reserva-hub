@@ -14,7 +14,6 @@ public interface EditionRequestRepository
         @Query("FROM EditionRequest e " +
                         "JOIN e.reservation r " +
                         "JOIN e.user u " +
-
                         "WHERE e.status = 'AWAITING_APPROVAL' " +
                         "AND u.id = :userId " +
                         "ORDER BY e.date, e.startTime")
