@@ -3,8 +3,6 @@
     import { browser } from "$app/environment";
 
     import {
-        Badge,
-        Button,
         Collapse,
         Nav,
         Navbar,
