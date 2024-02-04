@@ -3,6 +3,12 @@
   import SmallContainer from "$lib/components/SmallContainer.svelte";
 </script>
 
+<svelte:head>
+    <title>
+        ReservaHub
+    </title>
+</svelte:head>
+
 <SmallContainer>
   <header>
     <Logo class="text-center" />

@@ -44,6 +44,7 @@ export const loginSchema = zfd.formData({
 
 const localDateRegex = /\d{4}-\d{2}-\d{2}/gm;
 const localTimeRegex = /\d{2}:\d{2}:\d{2}/gm;
+const formTimeRegex = /\d{2}:\d{2}/gm;
 
 export namespace forms {
     export const roomFilter = zfd.formData({
@@ -51,27 +52,52 @@ export namespace forms {
         buildingNumber: zfd.text().optional(),
         roomType: zfd.text().optional(),
         capacity: zfd.numeric(z.number().min(1).default(1)),
-        startTime: zfd.text(z.string().regex(localTimeRegex)).optional(),
-        endTime: zfd.text(z.string().regex(localTimeRegex)).optional(),
+        startTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
+        endTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
         date: zfd.text(z.string().regex(localDateRegex)).optional(),
-        resources: zfd.text().array().optional()
-    })
+        resources: zfd.text().array().optional(),
+    });
+
+    export const editReservation = zfd.formData({
+        reservationId: zfd.numeric(),
+        roomId: zfd.numeric(),
+        eventName: zfd.text(),
+        eventDescription: zfd.text(),
+        date: zfd.text(z.string().regex(localDateRegex)),
+        startTime: z.string().regex(formTimeRegex),
+        endTime: z.string().regex(formTimeRegex),
+    });
 }
+
+export namespace responses {
+    export const edit = z.object({
+        editionRequestId: z.number(),
+        eventName: z.string(),
+        status: z.enum(["CANCELED", "APPROVED"]),
+    });
+
+    export const approval = z.object({
+        reservationId: z.number(),
+        eventName: z.string(),
+        status: z.enum(["CANCELED", "ACTIVE"]),
+    });
+}
+
 export namespace schema {
     const role = z.enum(["STUDENT", "TEACHER", "ADMIN"]);
 
     const userInfo = z.object({
         username: z.string(),
         userId: z.number(),
-        role
-    })
+        role,
+    });
 
     const roomInfo = z.object({
         roomNumber: z.string(),
-        buildingNumber: z.string()
-    })
+        buildingNumber: z.string(),
+    });
 
-    export const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"])
+    export const entityType = z.enum(["RESERVATION", "RESERVATION_REQUEST", "EDITION_REQUEST"]);
 
     export const user = z.object({
         token: z.string(),
@@ -80,35 +106,34 @@ export namespace schema {
         role,
     });
 
-    const entryStatus = z.enum(["ACTIVE",
-        "EXPIRED",
-        "CANCELED",
-        "AWAITING_APPROVAL",
-        "APPROVED",
-        "DENIED"])
+    export const entryStatus = z.enum(["ACTIVE", "EXPIRED", "CANCELED", "AWAITING_APPROVAL", "APPROVED", "DENIED"]);
 
     const entryMapping = z.object({
         type: entityType,
-        entityId: z.number()
-    })
+        entityId: z.number(),
+    });
 
-    export const userHistoryEntry = z.object({
-        userInfo,
-        roomInfo,
-        entryMapping,
-        eventName: z.string(),
-        status: entryStatus,
-        date: z.string().regex(localDateRegex),
-        startTime: z.string().regex(localTimeRegex),
-        endTime: z.string().regex(localTimeRegex),
-    }).array();
+    export const userHistoryEntry = z
+        .object({
+            userInfo,
+            roomInfo,
+            entryMapping,
+            eventName: z.string(),
+            status: entryStatus,
+            date: z.string().regex(localDateRegex),
+            startTime: z.string().regex(localTimeRegex),
+            endTime: z.string().regex(localTimeRegex),
+        })
+        .array();
 
-    export const rooms = z.object({
-        id: z.number(),
-        roomNumber: z.string(),
-        buildingNumber: z.string(),
-        type: z.string(),
-        capacity: z.number(),
-        resources: z.string().array()
-    }).array()
+    export const rooms = z
+        .object({
+            id: z.number(),
+            roomNumber: z.string(),
+            buildingNumber: z.string(),
+            type: z.string(),
+            capacity: z.number(),
+            resources: z.string().array(),
+        })
+        .array();
 }
