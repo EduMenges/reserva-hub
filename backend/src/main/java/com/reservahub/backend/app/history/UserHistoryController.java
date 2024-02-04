@@ -37,7 +37,7 @@ public class UserHistoryController {
         }
     }
 
-    //@PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER') or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER') or hasAuthority('ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<UserHistoryEntryDTO> searchHistory(@RequestParam(required = true) Long entryId, @RequestParam(required = true) EntityType type) {
         return ResponseEntity.ok(historyService.getSingleEntryHistory(entryId, type));
