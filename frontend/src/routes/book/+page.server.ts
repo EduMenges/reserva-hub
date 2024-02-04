@@ -1,8 +1,8 @@
-import { errorCodes, errorCodesSchema, errorSchema, forms, maybeError, schema } from "$lib/schemas";
+import { forms, schema } from "$lib/schemas";
 import { fail, type Actions, error } from "@sveltejs/kit";
-import { message, superValidate } from "sveltekit-superforms/server";
+import { superValidate } from "sveltekit-superforms/server";
 import type { PageServerLoad } from "./$types";
-import { RestMethods, call, get } from "$lib/ApiHelpers";
+import { get } from "$lib/ApiHelpers";
 import type { Rooms } from "$lib/ApiTypes";
 
 export const load = (async ({ locals, request, url }) => {
@@ -37,5 +37,5 @@ export const actions: Actions = {
     },
     allocateRoom: async ({ request }) => {
         throw error(501);
-    }
-}
+    },
+};

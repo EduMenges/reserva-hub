@@ -1,21 +1,25 @@
-import type { PageServerLoad } from "./$types";
-import { error } from "@sveltejs/kit";
-import { GetHistory } from "$lib/ApiEndpoints";
+import { RestMethods, call } from "$lib/ApiHelpers";
+import type { Error } from "$lib/ApiTypes";
+import { responses } from "$lib/schemas";
+import { fail, type Actions } from "@sveltejs/kit";
 
-export const load = (async ({ locals }) => {
-    if (!locals.user) {
-        throw error(401);
-    }
+export const actions: Actions = {
+    cancel: async ({ locals, request }) => {
+        const editionRequestId = Number((await request.formData()).get("editionRequestId"));
 
-    const history = await GetHistory(locals.user.token);
+        const body = await call<any, Error>(
+            RestMethods.POST,
+            "edit/cancel",
+            JSON.stringify({ editionRequestId }),
+            locals.user?.token
+        );
 
-    return {
-        history: history.map(entry => ({
-            status: entry.status,
-            roomInfo: entry.roomInfo,
-            startDate: new Date(`${entry.date}T${entry.startTime}`),
-            endDate: new Date(`${entry.date}T${entry.endTime}`),
-            name: entry.eventName
-        }))
-    };
-}) satisfies PageServerLoad;
+        if ("error" in body) {
+            return fail(body.status, body.error);
+        }
+
+        const response = responses.edit.parse(body.data);
+
+        return { response };
+    },
+};

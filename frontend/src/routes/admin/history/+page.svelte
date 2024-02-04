@@ -1,5 +1,7 @@
 <script lang="ts">
-    import  StatusColored  from "$lib/components/StatusColored.svelte"
+    import StatusColored from "$lib/components/StatusColored.svelte";
+    import Date from "$lib/components/table/Date.svelte";
+    import TimeSpan from "$lib/components/table/TimeSpan.svelte";
 
     export let data;
 </script>
@@ -17,17 +19,13 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.history.filter(entry => entry.status !== "AWAITING_APPROVAL") as entry}
+            {#each data.history.filter((entry) => entry.status !== "AWAITING_APPROVAL") as entry}
                 <tr>
                     <td>
                         {entry.userInfo.username}
                     </td>
-                    <td>
-                        {entry.date}
-                    </td>
-                    <td>
-                        {entry.startTime.slice(0, 5)} — {entry.endTime.slice(0, 5)}
-                    </td>
+                    <Date date={entry.startDate} />
+                    <TimeSpan startTime={entry.startDate} endTime={entry.endDate} />
                     <td>
                         {entry.eventName}
                     </td>
