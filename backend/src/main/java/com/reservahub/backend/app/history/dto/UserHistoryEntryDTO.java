@@ -26,6 +26,7 @@ public class UserHistoryEntryDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RoomInfo {
+        private Long roomId;
         private String roomNumber;
         private String buildingNumber;
     }

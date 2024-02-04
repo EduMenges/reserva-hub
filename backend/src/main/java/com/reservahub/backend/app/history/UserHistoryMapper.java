@@ -39,7 +39,7 @@ public class UserHistoryMapper {
     private static UserHistoryEntryDTO createBasicDto(User user, Room room) {
         UserHistoryEntryDTO dto = new UserHistoryEntryDTO();
         dto.setUserInfo(new UserInfo(user.getUsername(), user.getId(), user.getRole().name()));
-        dto.setRoomInfo(new RoomInfo(room.getRoomNumber(), room.getBuildingNumber()));
+        dto.setRoomInfo(new RoomInfo(room.getId(), room.getRoomNumber(), room.getBuildingNumber()));
         return dto;
     }
 
