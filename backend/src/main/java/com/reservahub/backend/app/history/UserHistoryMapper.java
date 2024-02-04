@@ -16,7 +16,8 @@ public class UserHistoryMapper {
 
     public static UserHistoryEntryDTO toDto(EditionRequest editionRequest) {
         UserHistoryEntryDTO dto = createBasicDto(editionRequest.getUser(), editionRequest.getRoom());
-        setEventDetails(dto, editionRequest.getEventName(), editionRequest.getDate(), editionRequest.getStartTime(),
+        setEventDetails(dto, editionRequest.getEventName(), editionRequest.getEventDescription(),
+                editionRequest.getDate(), editionRequest.getStartTime(),
                 editionRequest.getEndTime());
         dto.getEntryMapping().setType(EntityType.EDITION_REQUEST);
         dto.getEntryMapping().setEntityId(editionRequest.getId());
@@ -26,7 +27,8 @@ public class UserHistoryMapper {
 
     public static UserHistoryEntryDTO toDto(Reservation reservation) {
         UserHistoryEntryDTO dto = createBasicDto(reservation.getUser(), reservation.getRoom());
-        setEventDetails(dto, reservation.getEventName(), reservation.getDate(), reservation.getStartTime(),
+        setEventDetails(dto, reservation.getEventName(), reservation.getEventDescription(), reservation.getDate(),
+                reservation.getStartTime(),
                 reservation.getEndTime());
         dto.getEntryMapping().setType(determineReservationType(reservation.getStatus()));
         dto.getEntryMapping().setEntityId(reservation.getId());
@@ -41,10 +43,12 @@ public class UserHistoryMapper {
         return dto;
     }
 
-    private static void setEventDetails(UserHistoryEntryDTO dto, String eventName, LocalDate date, LocalTime startTime,
+    private static void setEventDetails(UserHistoryEntryDTO dto, String eventName, String eventDescription,
+            LocalDate date, LocalTime startTime,
             LocalTime endTime) {
         dto.setEventName(eventName);
         dto.setDate(date);
+        dto.setEventDescription(eventDescription);
         dto.setStartTime(startTime);
         dto.setEndTime(endTime);
     }

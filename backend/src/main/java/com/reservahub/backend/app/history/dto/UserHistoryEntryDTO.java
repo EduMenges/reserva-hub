@@ -16,6 +16,7 @@ public class UserHistoryEntryDTO {
     private RoomInfo roomInfo = new RoomInfo();
     private EntryMapping entryMapping = new EntryMapping();
     private String eventName;
+    private String eventDescription;
     private EntryStatus status;
     private LocalDate date;
     private LocalTime startTime;
