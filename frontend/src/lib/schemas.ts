@@ -113,18 +113,19 @@ export namespace schema {
         entityId: z.number(),
     });
 
-    export const userHistoryEntry = z
-        .object({
-            userInfo,
-            roomInfo,
-            entryMapping,
-            eventName: z.string(),
-            status: entryStatus,
-            date: z.string().regex(localDateRegex),
-            startTime: z.string().regex(localTimeRegex),
-            endTime: z.string().regex(localTimeRegex),
-        })
-        .array();
+    export const historyEntry = z.object({
+        userInfo,
+        roomInfo,
+        entryMapping,
+        eventName: z.string(),
+        eventDescription: z.string(),
+        status: entryStatus,
+        date: z.string().regex(localDateRegex),
+        startTime: z.string().regex(localTimeRegex),
+        endTime: z.string().regex(localTimeRegex),
+    });
+
+    export const fullHistory = historyEntry.array();
 
     export const rooms = z
         .object({

@@ -9,5 +9,5 @@ export async function GetHistory(token: string) {
         throw error(historyReply.status, historyReply.error);
     }
 
-    return schema.userHistoryEntry.parse(historyReply.data);
+    return schema.fullHistory.parse(historyReply.data);
 }
