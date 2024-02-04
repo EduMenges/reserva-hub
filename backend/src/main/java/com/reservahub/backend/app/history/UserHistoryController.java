@@ -8,9 +8,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO;
+import com.reservahub.backend.app.history.dto.UserHistoryEntryDTO.EntityType;
 import com.reservahub.backend.app.user.User;
 import com.reservahub.backend.app.user.UserDetails;
 
@@ -33,6 +35,12 @@ public class UserHistoryController {
         } else {
             return ResponseEntity.ok(historyService.getGlobalHistory());
         }
+    }
+
+    @PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER') or hasAuthority('ADMIN')")
+    @GetMapping("/search")
+    public ResponseEntity<UserHistoryEntryDTO> searchHistory(@RequestParam(required = true) Long entryId, @RequestParam(required = true) EntityType type) {
+        return ResponseEntity.ok(historyService.getSingleEntryHistory(entryId, type));
     }
 
 }
