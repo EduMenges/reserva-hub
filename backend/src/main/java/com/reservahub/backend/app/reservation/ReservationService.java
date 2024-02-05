@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+
 import com.reservahub.backend.app.exception.RoomAlreadyReservedException;
 import com.reservahub.backend.app.reservation.Reservation.ReservationStatus;
 import com.reservahub.backend.app.reservation.dto.ReservationRequestDto;
@@ -60,9 +62,30 @@ public class ReservationService {
         ReservationStatus status = userDetails.getAuthorityName() == User.RoleEnum.STUDENT.name()
                 ? ReservationStatus.AWAITING_APPROVAL
                 : ReservationStatus.ACTIVE;
-        validateRoomAvailability(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
+        if (userDetails.getAuthorityName().equals(User.RoleEnum.TEACHER.name())) {
+            validateRoomAvailabilityForTeacher(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
+            ArrayList<Reservation> conflictingReservations =
+                    reservationRepository.findConflictingReservations(
+                            dto.getRoomId(),
+                            dto.getDate(), 
+                            dto.getStartTime(), 
+                            dto.getEndTime()
+                    );
+            releaseReservations(conflictingReservations);
+        } else {
+            validateRoomAvailability(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
+        }
         Reservation request = buildRequest(user, dto, room, status);
         return reservationRepository.save(request);
+    }
+
+    private void releaseReservations(ArrayList<Reservation> reservations) {
+        for (Reservation reservation : reservations) {
+            reservation.setStatus(ReservationStatus.CANCELED);
+        }
+        if (reservations != null) {
+            reservationRepository.saveAll(reservations);
+        }
     }
 
     private Reservation findReservation(Long reservationId) {
@@ -78,6 +101,14 @@ public class ReservationService {
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    private void validateRoomAvailabilityForTeacher(Long roomId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+        boolean hasConflict = 
+                reservationRepository.existsActiveReservationFromATeacherWithTimeConflict(roomId, date, startTime, endTime);
+        if (hasConflict) {
+            throw new RoomAlreadyReservedException();
+        }
     }
 
     private void validateRoomAvailability(Long roomId, LocalDate date, LocalTime startTime,
