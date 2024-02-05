@@ -1,12 +1,20 @@
 <script lang="ts">
-    import type * as Api from "$lib/ApiTypes"
-    export let message: Api.Error | undefined;
+    import { Alert } from "@sveltestrap/sveltestrap";
+
+    export let message: App.Superforms.Message | undefined;
 </script>
 
 {#if message}
-    <ul>
-        {#each message.errors as error}
-            <li class="text-danger ">{error}</li>
-        {/each}
-    </ul>
+    {#if typeof message === "string"}
+        <Alert color="success" class="mt-2">{message}</Alert>
+    {:else}
+        <Alert color="danger">
+            Erro
+            <ul>
+                {#each message.errors as error}
+                    <li class="text-danger">{error}</li>
+                {/each}
+            </ul>
+        </Alert>
+    {/if}
 {/if}

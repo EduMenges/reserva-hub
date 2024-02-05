@@ -14,7 +14,7 @@ declare global {
         // interface PageState {}
         // interface Platform {}
         namespace Superforms {
-            type Message = Api.Error;
+            type Message = Api.Error | string;
         }
     }
 }
