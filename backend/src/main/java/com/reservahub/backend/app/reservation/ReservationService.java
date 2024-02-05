@@ -34,7 +34,7 @@ public class ReservationService {
     @Transactional
     public Reservation cancelReservation(UserDetails userDetails, Long reservationId) {
         Reservation reservation = findReservation(reservationId);
-        if(reservation.getUser().getId() != userDetails.getId()){
+        if(reservation.getUser().getId() != userDetails.getId() && !userDetails.getAuthorityName().equals(User.RoleEnum.ADMIN.name())){
             throw new AccessDeniedException("Acess Denied");
         }
         reservation.setStatus(ReservationStatus.CANCELED);
@@ -48,16 +48,6 @@ public class ReservationService {
             throw new AccessDeniedException("Acess Denied");
         }
         reservation.setStatus(ReservationStatus.ACTIVE);
-        return reservationRepository.save(reservation);
-    }
-
-    @Transactional
-    public Reservation denyReservation(UserDetails userDetails, Long reservationId) {
-        Reservation reservation = findReservation(reservationId);
-        if(!userDetails.getAuthorityName().equals(User.RoleEnum.ADMIN.name())){
-            throw new AccessDeniedException("Acess Denied");
-        }
-        reservation.setStatus(ReservationStatus.DENIED);
         return reservationRepository.save(reservation);
     }
 

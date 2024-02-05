@@ -41,17 +41,7 @@ public class ReservationController {
         return ResponseEntity.ok(new ReservationResponseDto(approvedReservation.getId(), approvedReservation.getEventName(), approvedReservation.getStatus().name()));
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/deny")
-    public ResponseEntity<ReservationResponseDto> denyReservation(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody ChangeStatusReservationRequestDto changeStatusReservationRequest) {
-        Reservation deniedReservation = reservationService.denyReservation(userDetails, changeStatusReservationRequest.getReservationId());
-
-        return ResponseEntity.ok(new ReservationResponseDto(deniedReservation.getId(), deniedReservation.getEventName(), deniedReservation.getStatus().name()));
-    }
-
-    @PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER')")
+    @PreAuthorize("hasAuthority('STUDENT') or hasAuthority('TEACHER') or hasAuthority('ADMIN')")
     @PostMapping("/cancel")
     public ResponseEntity<ReservationResponseDto> cancelReservation(
             @AuthenticationPrincipal UserDetails userDetails,
