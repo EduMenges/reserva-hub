@@ -8,12 +8,12 @@ import { errorSchema, maybeError, schema } from "$lib/schemas";
 import type { Error, User } from "$lib/ApiTypes";
 import { loginSchema } from "$lib/schemas";
 
-export const load = (async ({ request, locals }) => {
+export const load = (async ({ locals }) => {
     if (locals.user) {
         return redirect(307, "/");
     }
 
-    const form = await superValidate(request, loginSchema.sourceType());
+    const form = await superValidate(loginSchema.sourceType());
     return { form };
 }) satisfies PageServerLoad;
 

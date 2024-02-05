@@ -1,22 +1,30 @@
 import { forms, schema } from "$lib/schemas";
 import { fail, type Actions, error } from "@sveltejs/kit";
-import { superValidate } from "sveltekit-superforms/server";
+import { message, superValidate } from "sveltekit-superforms/server";
 import type { PageServerLoad } from "./$types";
-import { get } from "$lib/ApiHelpers";
+import { RestMethods, call, get } from "$lib/ApiHelpers";
 import type { Rooms } from "$lib/ApiTypes";
 
-export const load = (async ({ locals, request, url }) => {
+export const load = (async ({ locals, url }) => {
     if (!locals.user) {
         throw error(401);
     }
 
-    const form = await superValidate(request, forms.roomFilter.sourceType());
+    const searchForm = await superValidate(url, forms.roomFilter.sourceType());
+    const bookForm = await superValidate(forms.roomBooking.sourceType());
 
-    if (url.search.length == 0) {
-        return { form };
+    if (!searchForm.valid) {
+        return { searchForm, bookForm };
     }
 
-    const body = await get<Rooms, Error>("room/filter", url.search, locals.user.token);
+    const urlObject = new URL(url);
+    url.searchParams.forEach((value, key) => {
+        if (value === "") {
+            urlObject.searchParams.delete(key, value);
+        }
+    });
+
+    const body = await get<Rooms, Error>("room/filter", urlObject.search, locals.user.token);
 
     if ("error" in body) {
         throw error(body.status, body.error);
@@ -24,18 +32,30 @@ export const load = (async ({ locals, request, url }) => {
 
     const rooms = schema.rooms.parse(body.data);
 
-    return { form, rooms };
+    return { searchForm, rooms, bookForm };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-    search: async ({ request }) => {
-        const form = await superValidate(request, forms.roomFilter.sourceType());
+    allocateRoom: async ({ request, locals }) => {
+        const bookForm = await superValidate(request, forms.roomBooking.sourceType());
 
-        if (!form.valid) {
-            return fail(400, { form });
+        if (!bookForm.valid) {
+            return fail(400, { bookForm });
         }
-    },
-    allocateRoom: async ({ request }) => {
-        throw error(501);
+
+        bookForm.data.roomId = 69;
+
+        const body = await call<any, Error>(
+            RestMethods.POST,
+            "reservation/request",
+            JSON.stringify(bookForm.data),
+            locals.user?.token
+        );
+
+        if ("error" in body) {
+            return message(bookForm, body.error, { status: body.status });
+        }
+
+        return message(bookForm, "Reservado com sucesso!");
     },
 };

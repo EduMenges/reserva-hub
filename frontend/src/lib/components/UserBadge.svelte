@@ -5,6 +5,6 @@
     export let user: User
 </script>
 
-<Badge color={user.role === "ADMIN" ? "danger" : "secondary"}>
+<Badge color={user.role === "ADMIN" ? "danger" : user.role === "TEACHER" ? "warning" : "primary"}>
     {user.role}
 </Badge>

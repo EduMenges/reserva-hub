@@ -2,6 +2,7 @@
     import { superForm } from "sveltekit-superforms/client";
     import type { PageData } from "./$types";
     import ListErrors from "$lib/components/ListErrors.svelte";
+    import ListMessages from "$lib/components/ListMessages.svelte";
 
     export let data: PageData;
 
@@ -13,6 +14,8 @@
 </svelte:head>
 
 <form method="post" use:enhance>
+    <ListMessages message={$message}/>
+
     <fieldset name="time">
         <legend>Horário</legend>
 
@@ -88,5 +91,5 @@
 
     <button class="btn btn-primary" type="submit" formaction="?/edit">Confirmar</button>
     <a class="btn btn-secondary" href="/history">Cancelar</a>
-    <button class="btn btn-danger" type="submit" formaction="?/delete">Excluir</button>
+    <button class="btn btn-danger" type="submit" formaction="?/delete" formnovalidate>Excluir</button>
 </form>

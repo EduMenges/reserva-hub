@@ -42,9 +42,9 @@ export const loginSchema = zfd.formData({
     password: zfd.text(z.string({ required_error: "Sua senha é necessária" })),
 });
 
-const localDateRegex = /\d{4}-\d{2}-\d{2}/gm;
-const localTimeRegex = /\d{2}:\d{2}:\d{2}/gm;
-const formTimeRegex = /\d{2}:\d{2}/gm;
+const localDateRegex = /^\d{4}-\d{2}-\d{2}$/gm;
+const localTimeRegex = /^\d{2}:\d{2}:\d{2}$/gm;
+const formTimeRegex = /^\d{2}:\d{2}$/gm;
 
 export namespace forms {
     export const roomFilter = zfd.formData({
@@ -56,6 +56,15 @@ export namespace forms {
         endTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
         date: zfd.text(z.string().regex(localDateRegex)).optional(),
         resources: zfd.text().array().optional(),
+    });
+
+    export const roomBooking = zfd.formData({
+        roomId: zfd.numeric(),
+        eventName: zfd.text(),
+        eventDescription: zfd.text(),
+        date: zfd.text(z.string().regex(localDateRegex)),
+        startTime: zfd.text(z.string().regex(formTimeRegex)),
+        endTime: zfd.text(z.string().regex(formTimeRegex)),
     });
 
     export const editReservation = zfd.formData({
@@ -113,18 +122,19 @@ export namespace schema {
         entityId: z.number(),
     });
 
-    export const userHistoryEntry = z
-        .object({
-            userInfo,
-            roomInfo,
-            entryMapping,
-            eventName: z.string(),
-            status: entryStatus,
-            date: z.string().regex(localDateRegex),
-            startTime: z.string().regex(localTimeRegex),
-            endTime: z.string().regex(localTimeRegex),
-        })
-        .array();
+    export const historyEntry = z.object({
+        userInfo,
+        roomInfo,
+        entryMapping,
+        eventName: z.string(),
+        eventDescription: z.string(),
+        status: entryStatus,
+        date: z.string().regex(localDateRegex),
+        startTime: z.string().regex(localTimeRegex),
+        endTime: z.string().regex(localTimeRegex),
+    });
+
+    export const fullHistory = historyEntry.array();
 
     export const rooms = z
         .object({
