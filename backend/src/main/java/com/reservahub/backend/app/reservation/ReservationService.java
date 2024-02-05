@@ -52,6 +52,16 @@ public class ReservationService {
     }
 
     @Transactional
+    public Reservation denyReservation(UserDetails userDetails, Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        if(!userDetails.getAuthorityName().equals(User.RoleEnum.ADMIN.name())){
+            throw new AccessDeniedException("Acess Denied");
+        }
+        reservation.setStatus(ReservationStatus.DENIED);
+        return reservationRepository.save(reservation);
+    }
+
+    @Transactional
     public Reservation saveReservation(UserDetails userDetails, ReservationRequestDto dto) {
         Room room = findRoom(dto.getRoomId());
         User user = findUser(userDetails.getId());
