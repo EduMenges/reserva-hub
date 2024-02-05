@@ -27,6 +27,21 @@ public interface ReservationRepository
                         @Param("startTime") LocalTime startTime,
                         @Param("endTime") LocalTime endTime);
 
+        @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
+                        "FROM Reservation r " +
+                        "WHERE r.room.id = :roomId " +
+                        "AND r.date = :date " +
+                        "AND r.status = 'ACTIVE' " +
+                        "AND r.user.role = 'TEACHER' " +
+                        "AND ((r.startTime < :endTime AND r.endTime > :startTime) OR " +
+                        "(r.startTime < :startTime AND r.endTime > :startTime) OR " +
+                        "(r.startTime < :endTime AND r.endTime > :endTime))")
+        public boolean existsActiveReservationFromATeacherWithTimeConflict(
+                        @Param("roomId") Long roomId,
+                        @Param("date") LocalDate date,
+                        @Param("startTime") LocalTime startTime,
+                        @Param("endTime") LocalTime endTime);
+
         @Query("FROM Reservation r " +
                         "WHERE r.user.id = :userId " +
                         "ORDER BY " +
@@ -56,4 +71,16 @@ public interface ReservationRepository
                         "r.date " +
                         "DESC")
         public ArrayList<Reservation> findAllReservations();
+
+        @Query("SELECT r FROM Reservation r " +
+                        "JOIN FETCH r.user " +
+                        "JOIN FETCH r.room " +
+                        "WHERE r.room.id = :roomId " +
+                        "AND r.date = :date " +
+                        "AND r.status = 'ACTIVE' " +
+                        "AND ((r.startTime < :endTime AND r.endTime > :startTime) OR " +
+                        "(r.startTime < :startTime AND r.endTime > :startTime) OR " +
+                        "(r.startTime < :endTime AND r.endTime > :endTime))")
+        public ArrayList<Reservation> findConflictingReservations(Long roomId, LocalDate date, LocalTime startTime,
+                        LocalTime endTime);
 }
