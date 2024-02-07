@@ -86,8 +86,8 @@
         </div>
     </fieldset>
 
-    <input type="number" hidden id="reservationId" bind:value={$form.reservationId} />
-    <input type="number" hidden id="roomId" bind:value={$form.roomId} />
+    <input type="number" hidden name="reservationId" bind:value={$form.reservationId} />
+    <input type="number" hidden name="roomId" bind:value={$form.roomId} />
 
     <button class="btn btn-primary" type="submit" formaction="?/edit">Confirmar</button>
     <a class="btn btn-secondary" href="/history">Cancelar</a>
