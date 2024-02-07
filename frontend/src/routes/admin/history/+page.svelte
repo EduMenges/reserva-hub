@@ -2,6 +2,8 @@
     import StatusColored from "$lib/components/StatusColored.svelte";
     import Date from "$lib/components/table/Date.svelte";
     import TimeSpan from "$lib/components/table/TimeSpan.svelte";
+    import { readableEntityType } from "$lib/utils";
+
 
     export let data;
 </script>
@@ -15,6 +17,7 @@
                 <th scope="col">Horário</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Sala</th>
+                <th scope="col">Tipo</th>
                 <th scope="col">Status</th>
             </tr>
         </thead>
@@ -31,6 +34,9 @@
                     </td>
                     <td>
                         {entry.roomInfo.buildingNumber} — {entry.roomInfo.roomNumber}
+                    </td>
+                    <td>
+                        {readableEntityType(entry.entryMapping.type)}
                     </td>
                     <td>
                         <StatusColored status={entry.status} />
