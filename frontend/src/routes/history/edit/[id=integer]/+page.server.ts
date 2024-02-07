@@ -25,7 +25,7 @@ export const load = (async ({ params, parent }) => {
     const data: z.infer<typeof forms.editReservation> = {
         date: history.startTime.toISOString().split("T")[0],
         eventName: history.name,
-        eventDescription: "",
+        eventDescription: history.eventDescription,
         startTime: hours(history.startTime),
         endTime: hours(history.endTime),
         reservationId: history.entryMapping.entityId,
@@ -56,7 +56,7 @@ export const actions: Actions = {
             return message(form, body.error, { status: body.status });
         }
 
-        return message(form, "Edição editada com sucesso!");
+        return message(form, "Solicitação de edição enviada com sucesso!");
     },
     async delete({ request, locals }) {
         const form = await superValidate(request, forms.editReservation.sourceType());
