@@ -3,7 +3,7 @@ import { fail, type Actions, error } from "@sveltejs/kit";
 import { message, superValidate } from "sveltekit-superforms/server";
 import type { PageServerLoad } from "./$types";
 import { RestMethods, call, get } from "$lib/ApiHelpers";
-import type { Rooms } from "$lib/ApiTypes";
+import type { Rooms, Error } from "$lib/ApiTypes.d";
 
 export const load = (async ({ locals, url }) => {
     if (!locals.user) {
@@ -13,7 +13,7 @@ export const load = (async ({ locals, url }) => {
     const searchForm = await superValidate(url, forms.roomFilter.sourceType());
     const bookForm = await superValidate(forms.roomBooking.sourceType());
 
-    if (!searchForm.valid) {
+    if (url.search.length === 0 || !searchForm.valid) {
         return { searchForm, bookForm };
     }
 

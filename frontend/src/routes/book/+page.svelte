@@ -20,8 +20,6 @@
     <title>Buscar Sala</title>
 </svelte:head>
 
-<SuperDebug data={$bookingForm} />
-
 {#if data?.user?.role === "STUDENT"}
     <div class="alert alert-warning mb-3" role="alert">
         Reservas realizadas por alunos necessitam da aprovação de um administrador.
@@ -153,6 +151,7 @@
             <fieldset>
                 <legend>Salas disponíveis</legend>
 
+                <p>Prédio | Sala | Capacidade</p>
                 {#each data.rooms as room}
                     <div class="form-check">
                         <input

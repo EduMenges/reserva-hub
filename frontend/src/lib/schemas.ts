@@ -102,6 +102,7 @@ export namespace schema {
     });
 
     const roomInfo = z.object({
+        roomId: z.number(),
         roomNumber: z.string(),
         buildingNumber: z.string(),
     });

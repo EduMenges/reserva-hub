@@ -18,4 +18,4 @@ Todos os endpoints são bloqueados por padrão e precisam de um bearer token, ex
 
 ## Frontend
 
-É necessário ter o `pnpm` instalado. Para rodar a versão dev com hot-reload, basta fazer `pnpm dev`. Para compilar, basta fazer `pnpm build`.
+É necessário ter o `pnpm` instalado. Para inicializar os módulos, é necessário executar `pnpm install` na pasta `frontend`. Esse comando só precisa ser rodado na primeira vez. Para rodar a versão dev com hot-reload, basta fazer `pnpm dev`. Para compilar, basta fazer `pnpm build`.

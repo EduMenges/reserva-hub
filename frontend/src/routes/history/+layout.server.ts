@@ -14,15 +14,15 @@ export const load = (async ({ locals }) => {
             .map((entry) => ({
                 status: entry.status,
                 roomInfo: entry.roomInfo,
-                startDate: new Date(`${entry.date}T${entry.startTime}`),
-                endDate: new Date(`${entry.date}T${entry.endTime}`),
+                startTime: new Date(`${entry.date}T${entry.startTime}`),
+                endTime: new Date(`${entry.date}T${entry.endTime}`),
                 name: entry.eventName,
                 entryMapping: entry.entryMapping,
             }))
             .sort((a, b) => {
-                if (a.startDate < b.startDate) {
+                if (a.startTime < b.startTime) {
                     return 1;
-                } else if (a.startDate === b.startDate) {
+                } else if (a.startTime === b.startTime) {
                     return 0;
                 }
                 return -1;

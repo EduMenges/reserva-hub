@@ -1,14 +1,15 @@
 import { message, superValidate } from "sveltekit-superforms/server";
 import type { PageServerLoad } from "./$types";
 import { forms, loginSchema, responses, schema } from "$lib/schemas";
-import { error, type Actions, fail } from "@sveltejs/kit";
+import { error, type Actions, fail, redirect } from "@sveltejs/kit";
 import { z } from "zod";
 import { hours } from "$lib/utils";
 import type { Error } from "$lib/ApiTypes";
 import { api } from "$lib";
 import { RestMethods } from "$lib/ApiHelpers";
+import { isEditable } from "../../isEditable";
 
-export const load = (async ({ locals, params, parent }) => {
+export const load = (async ({ params, parent }) => {
     const fullHistory = (await parent()).history;
 
     const history = fullHistory.find((entry) => entry.entryMapping.entityId === Number(params.id));
@@ -17,14 +18,18 @@ export const load = (async ({ locals, params, parent }) => {
         throw error(404);
     }
 
+    if (!isEditable(history)) {
+        throw error(400);
+    }
+
     const data: z.infer<typeof forms.editReservation> = {
-        date: history.startDate.toISOString().split("T")[0],
+        date: history.startTime.toISOString().split("T")[0],
         eventName: history.name,
         eventDescription: "",
-        startTime: hours(history.startDate),
-        endTime: hours(history.endDate),
+        startTime: hours(history.startTime),
+        endTime: hours(history.endTime),
         reservationId: history.entryMapping.entityId,
-        roomId: 69,
+        roomId: history.roomInfo.roomId,
     };
 
     const form = await superValidate(data, forms.editReservation.sourceType());
@@ -77,6 +82,6 @@ export const actions: Actions = {
 
         const response = responses.approval.parse(body.data);
 
-        return { response };
+        return redirect(301, "history");
     },
 };

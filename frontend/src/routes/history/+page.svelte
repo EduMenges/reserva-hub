@@ -4,6 +4,7 @@
     import Date from "$lib/components/table/Date.svelte";
     import TimeSpan from "$lib/components/table/TimeSpan.svelte";
     import { Alert } from "@sveltestrap/sveltestrap";
+    import {isEditable} from "./isEditable";
 
     export let data;
     export let form;
@@ -32,13 +33,13 @@
                 </tr>
             </thead>
             <tbody>
-                {#each entries as entry (entry.startDate)}
+                {#each entries as entry (entry.startTime)}
                     <tr>
                         <td>
-                            <Date date={entry.startDate} />
+                            <Date date={entry.startTime} />
                         </td>
                         <td>
-                            <TimeSpan endTime={entry.endDate} startTime={entry.startDate} />
+                            <TimeSpan endTime={entry.endTime} startTime={entry.startTime} />
                         </td>
                         <td>
                             {entry.name}
@@ -52,7 +53,7 @@
                         <td>
                             <a
                                 class="btn btn-secondary"
-                                class:disabled={entry.status !== "AWAITING_APPROVAL"}
+                                class:disabled={!isEditable(entry)}
                                 href={`history/edit/${entry.entryMapping.entityId}`}
                             >
                                 <i class="bi bi-pencil-square"></i>
@@ -92,10 +93,10 @@
             {#each edits as edit}
                 <tr>
                     <td>
-                        <Date date={edit.startDate}></Date>
+                        <Date date={edit.startTime}></Date>
                     </td>
                     <td>
-                        <TimeSpan startTime={edit.startDate} endTime={edit.endDate} />
+                        <TimeSpan startTime={edit.startTime} endTime={edit.endTime} />
                     </td>
                     <td>
                         {edit.name}
