@@ -43,8 +43,6 @@ export const actions: Actions = {
             return fail(400, { bookForm });
         }
 
-        bookForm.data.roomId = 69;
-
         const body = await call<any, Error>(
             RestMethods.POST,
             "reservation/request",
