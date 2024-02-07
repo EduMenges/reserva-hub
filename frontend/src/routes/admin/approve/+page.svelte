@@ -50,8 +50,8 @@
                         <TimeSpan startTime={entry.startDate} endTime={entry.endDate} />
                         <td>
                             <span id="entry-name-{index}">{entry.eventName}</span>
-                            <Tooltip target="entry-name-{index}">
-                                {entry.eventDescription}
+                            <Tooltip target="entry-name-{index}" class="mb-2">
+                                {entry.eventDescription ?? "Sem descrição"}
                             </Tooltip>
                         </td>
                         <td>

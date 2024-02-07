@@ -26,8 +26,10 @@
     </div>
 {/if}
 
+<ListMessages message={$message} />
+<ListMessages message={$bookingMessage} />
+
 <form class="was-validated" method="get">
-    <ListMessages message={$message} />
     <fieldset name="horario" class="was-validated">
         <legend>Horário</legend>
 
@@ -114,10 +116,9 @@
         Buscar salas
     </button>
 </form>
-
 {#if data.rooms}
     {#if data.rooms.length > 0}
-        <form method="post" action="?/allocateRoom" use:bookingEnhance class="mt-2">
+        <form method="post" action="?/allocateRoom" use:bookingEnhance class="mt-2 was-validated">
             <fieldset name="informacoes">
                 <legend>Informações</legend>
 
@@ -176,12 +177,10 @@
                 type="time"
                 name="startTime"
                 bind:value={$form.startTime}
-                hidden
                 {...$bookingConstraints.startTime}
+                hidden
             />
             <input type="time" name="endTime" bind:value={$form.endTime} {...$bookingConstraints.endTime} hidden />
-
-            <ListMessages message={$bookingMessage} />
             <button type="submit" class="btn btn-primary mt-2">Efetuar reserva</button>
         </form>
     {:else}

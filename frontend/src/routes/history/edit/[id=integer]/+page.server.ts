@@ -56,11 +56,7 @@ export const actions: Actions = {
             return message(form, body.error, { status: body.status });
         }
 
-        // const response = responses.edit.parse(body.data);
-        // return { response };
-
         return message(form, "Solicitação de edição enviada com sucesso!");
-
     },
     async delete({ request, locals }) {
         const form = await superValidate(request, forms.editReservation.sourceType());
@@ -84,6 +80,6 @@ export const actions: Actions = {
 
         const response = responses.approval.parse(body.data);
 
-        return redirect(301, "../../history");
+        return redirect(301, "history");
     },
 };
