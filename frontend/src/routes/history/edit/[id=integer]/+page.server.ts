@@ -56,9 +56,7 @@ export const actions: Actions = {
             return message(form, body.error, { status: body.status });
         }
 
-        const response = responses.edit.parse(body.data);
-
-        return { response };
+        return message(form, "Edição editada com sucesso!");
     },
     async delete({ request, locals }) {
         const form = await superValidate(request, forms.editReservation.sourceType());

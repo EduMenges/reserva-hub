@@ -46,51 +46,7 @@ const localDateRegex = /^\d{4}-\d{2}-\d{2}$/gm;
 const localTimeRegex = /^\d{2}:\d{2}:\d{2}$/gm;
 const formTimeRegex = /^\d{2}:\d{2}$/gm;
 
-export namespace forms {
-    export const roomFilter = zfd.formData({
-        roomNumber: zfd.text().optional(),
-        buildingNumber: zfd.text().optional(),
-        roomType: zfd.text().optional(),
-        capacity: zfd.numeric(z.number().min(1).default(1)),
-        startTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
-        endTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
-        date: zfd.text(z.string().regex(localDateRegex)).optional(),
-        resources: zfd.text().array().optional(),
-    });
-
-    export const roomBooking = zfd.formData({
-        roomId: zfd.numeric(),
-        eventName: zfd.text(),
-        eventDescription: zfd.text(),
-        date: zfd.text(z.string().regex(localDateRegex)),
-        startTime: zfd.text(z.string().regex(formTimeRegex)),
-        endTime: zfd.text(z.string().regex(formTimeRegex)),
-    });
-
-    export const editReservation = zfd.formData({
-        reservationId: zfd.numeric(),
-        roomId: zfd.numeric(),
-        eventName: zfd.text(),
-        eventDescription: zfd.text(),
-        date: zfd.text(z.string().regex(localDateRegex)),
-        startTime: z.string().regex(formTimeRegex),
-        endTime: z.string().regex(formTimeRegex),
-    });
-}
-
-export namespace responses {
-    export const edit = z.object({
-        editionRequestId: z.number(),
-        eventName: z.string(),
-        status: z.enum(["CANCELED", "APPROVED"]),
-    });
-
-    export const approval = z.object({
-        reservationId: z.number(),
-        eventName: z.string(),
-        status: z.enum(["CANCELED", "ACTIVE"]),
-    });
-}
+const eventDescription = z.string().nullable();
 
 export namespace schema {
     const role = z.enum(["STUDENT", "TEACHER", "ADMIN"]);
@@ -128,7 +84,7 @@ export namespace schema {
         roomInfo,
         entryMapping,
         eventName: z.string(),
-        eventDescription: z.string(),
+        eventDescription,
         status: entryStatus,
         date: z.string().regex(localDateRegex),
         startTime: z.string().regex(localTimeRegex),
@@ -147,4 +103,50 @@ export namespace schema {
             resources: z.string().array(),
         })
         .array();
+}
+
+export namespace forms {
+    export const roomFilter = zfd.formData({
+        roomNumber: zfd.text().optional(),
+        buildingNumber: zfd.text().optional(),
+        roomType: zfd.text().optional(),
+        capacity: zfd.numeric(z.number().min(1).default(1)),
+        startTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
+        endTime: zfd.text(z.string().regex(formTimeRegex)).optional(),
+        date: zfd.text(z.string().regex(localDateRegex)).optional(),
+        resources: zfd.text().array().optional(),
+    });
+
+    export const roomBooking = zfd.formData({
+        roomId: zfd.numeric(),
+        eventName: zfd.text(),
+        eventDescription: zfd.text(eventDescription),
+        date: zfd.text(z.string().regex(localDateRegex)),
+        startTime: zfd.text(z.string().regex(formTimeRegex)),
+        endTime: zfd.text(z.string().regex(formTimeRegex)),
+    });
+
+    export const editReservation = zfd.formData({
+        reservationId: zfd.numeric(),
+        roomId: zfd.numeric(),
+        eventName: zfd.text(),
+        eventDescription: zfd.text(eventDescription),
+        date: zfd.text(z.string().regex(localDateRegex)),
+        startTime: z.string().regex(formTimeRegex),
+        endTime: z.string().regex(formTimeRegex),
+    });
+}
+
+export namespace responses {
+    export const edit = z.object({
+        editionRequestId: z.number(),
+        eventName: z.string(),
+        status: schema.entryStatus,
+    });
+
+    export const approval = z.object({
+        reservationId: z.number(),
+        eventName: z.string(),
+        status: schema.entryStatus,
+    });
 }

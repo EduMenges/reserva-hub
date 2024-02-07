@@ -8,7 +8,7 @@
     {#if typeof message === "string"}
         <Alert color="success" class="mt-2">{message}</Alert>
     {:else}
-        <Alert color="danger">
+        <Alert color="danger" class=mt-2>
             Erro
             <ul>
                 {#each message.errors as error}

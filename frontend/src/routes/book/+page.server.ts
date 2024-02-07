@@ -27,7 +27,7 @@ export const load = (async ({ locals, url }) => {
     const body = await get<Rooms, Error>("room/filter", urlObject.search, locals.user.token);
 
     if ("error" in body) {
-        throw error(body.status, body.error);
+        return fail(body.status, body.error);
     }
 
     const rooms = schema.rooms.parse(body.data);
@@ -42,8 +42,6 @@ export const actions: Actions = {
         if (!bookForm.valid) {
             return fail(400, { bookForm });
         }
-
-        bookForm.data.roomId = 69;
 
         const body = await call<any, Error>(
             RestMethods.POST,

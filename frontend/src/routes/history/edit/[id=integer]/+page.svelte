@@ -13,9 +13,9 @@
     <title>Editar reserva</title>
 </svelte:head>
 
-<form method="post" use:enhance>
-    <ListMessages message={$message}/>
+<ListMessages message={$message}/>
 
+<form method="post" use:enhance>
     <fieldset name="time">
         <legend>Horário</legend>
 
