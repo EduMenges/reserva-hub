@@ -3,8 +3,8 @@
     import StatusColored from "$lib/components/StatusColored.svelte";
     import Date from "$lib/components/table/Date.svelte";
     import TimeSpan from "$lib/components/table/TimeSpan.svelte";
-    import { Alert } from "@sveltestrap/sveltestrap";
-    import {isEditable} from "./isEditable";
+    import { Alert, Tooltip } from "@sveltestrap/sveltestrap";
+    import { isEditable } from "./isEditable";
 
     export let data;
     export let form;
@@ -33,7 +33,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each entries as entry (entry.startTime)}
+                {#each entries as entry, index (entry.startTime)}
                     <tr>
                         <td>
                             <Date date={entry.startTime} />
@@ -42,7 +42,10 @@
                             <TimeSpan endTime={entry.endTime} startTime={entry.startTime} />
                         </td>
                         <td>
-                            {entry.name}
+                            <span id="reservation-name-{index}">{entry.name}</span>
+                            <Tooltip target="reservation-name-{index}">
+                                {entry.eventDescription}
+                            </Tooltip>
                         </td>
                         <td>
                             {entry.roomInfo.buildingNumber} — {entry.roomInfo.roomNumber}
@@ -90,7 +93,7 @@
             <th scope="col">Cancelar</th>
         </thead>
         <tbody>
-            {#each edits as edit}
+            {#each edits as edit, index}
                 <tr>
                     <td>
                         <Date date={edit.startTime}></Date>
@@ -99,7 +102,10 @@
                         <TimeSpan startTime={edit.startTime} endTime={edit.endTime} />
                     </td>
                     <td>
-                        {edit.name}
+                        <span id="edit-name-{index}">{edit.name}</span>
+                        <Tooltip target="edit-name-{index}">
+                            {edit.eventDescription}
+                        </Tooltip>
                     </td>
                     <td>
                         {edit.roomInfo.buildingNumber} — {edit.roomInfo.roomNumber}
