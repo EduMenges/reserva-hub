@@ -82,7 +82,7 @@ export namespace responses {
     export const edit = z.object({
         editionRequestId: z.number(),
         eventName: z.string(),
-        status: z.enum(["CANCELED", "APPROVED"]),
+        status: z.enum(["CANCELED", "APPROVED", "AWAITING_APPROVAL", "DENIED"]),
     });
 
     export const approval = z.object({
