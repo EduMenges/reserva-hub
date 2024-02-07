@@ -61,10 +61,10 @@ public class EditionRequestService {
             throw new AccessDeniedException("Acess Denied");
         }
         validateApprovalPossibility(editionRequest);
-        validateRoomAvailability(editionRequest.getRoom().getId(), editionRequest.getDate(),
-                editionRequest.getStartTime(), editionRequest.getEndTime());
+        validateRoomAvailability(editionRequest.getReservation().getId(), editionRequest.getRoom().getId(), editionRequest.getDate(),
+        editionRequest.getStartTime(), editionRequest.getEndTime());
         editionRequest.setStatus(EditionRequestStatus.APPROVED);
-
+        
         Reservation reservation = editionRequest.getReservation();
         updateRequest(reservation, editionRequest);
 
@@ -94,7 +94,7 @@ public class EditionRequestService {
         EditionRequestStatus status = userDetails.getAuthorityName() == User.RoleEnum.STUDENT.name()
                 ? EditionRequestStatus.AWAITING_APPROVAL
                 : EditionRequestStatus.APPROVED;
-        validateRoomAvailability(dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
+        validateRoomAvailability(dto.getReservationId(), dto.getRoomId(), dto.getDate(), dto.getStartTime(), dto.getEndTime());
         EditionRequest request = buildRequest(user, dto, reservation, room, status);
         if (status == EditionRequestStatus.APPROVED) {
             updateRequest(reservation, request);
@@ -123,10 +123,10 @@ public class EditionRequestService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    private void validateRoomAvailability(Long roomId, LocalDate date, LocalTime startTime,
+    private void validateRoomAvailability(Long reservationId, Long roomId, LocalDate date, LocalTime startTime,
             LocalTime endTime) {
         boolean hasConflict = reservationRepository.existsActiveReservationWithTimeConflict(roomId, date, startTime,
-                endTime);
+                endTime, reservationId);
         if (hasConflict) {
             throw new RoomAlreadyReservedException();
         }
