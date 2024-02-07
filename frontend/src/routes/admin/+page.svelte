@@ -12,7 +12,7 @@
     <hr />
 
     <div class="d-flex justify-content-between">
-        <a class="btn btn-primary" href="admin/approve" role="button">Aprovar reservas</a>
-        <a class="btn btn-secondary" href="admin/history" role="button">Histórico de reservas</a>
+        <a class="btn btn-primary" href="admin/approve" role="button">Pedidos Pendentes</a>
+        <a class="btn btn-secondary" href="admin/history" role="button">Histórico global</a>
     </div>
 </SmallContainer>
