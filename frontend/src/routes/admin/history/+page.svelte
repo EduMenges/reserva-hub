@@ -3,6 +3,8 @@
     import Date from "$lib/components/table/Date.svelte";
     import TimeSpan from "$lib/components/table/TimeSpan.svelte";
     import { readableEntityType } from "$lib/utils";
+    import { Tooltip } from "@sveltestrap/sveltestrap";
+
 
 
     export let data;
@@ -22,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            {#each data.history.filter((entry) => entry.status !== "AWAITING_APPROVAL") as entry}
+            {#each data.history.filter((entry) => entry.status !== "AWAITING_APPROVAL") as entry, index}
                 <tr>
                     <td>
                         {entry.userInfo.username}
@@ -30,7 +32,10 @@
                     <Date date={entry.startDate} />
                     <TimeSpan startTime={entry.startDate} endTime={entry.endDate} />
                     <td>
-                        {entry.eventName}
+                        <span id="entry-name-{index}">{entry.eventName}</span>
+                        <Tooltip target="entry-name-{index}">
+                            {entry.eventDescription}
+                        </Tooltip>
                     </td>
                     <td>
                         {entry.roomInfo.buildingNumber} — {entry.roomInfo.roomNumber}

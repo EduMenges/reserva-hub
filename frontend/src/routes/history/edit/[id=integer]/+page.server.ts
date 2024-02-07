@@ -84,6 +84,6 @@ export const actions: Actions = {
 
         const response = responses.approval.parse(body.data);
 
-        return redirect(301, "history");
+        return redirect(301, "../../history");
     },
 };

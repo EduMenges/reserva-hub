@@ -14,6 +14,7 @@ export const load = (async ({ locals }) => {
             userInfo: entry.userInfo,
             roomInfo: entry.roomInfo,
             entryMapping: entry.entryMapping,
+            eventDescription: entry.eventDescription,
             eventName: entry.eventName,
             status: entry.status,
             startDate: new Date(`${entry.date}T${entry.startTime}`),
