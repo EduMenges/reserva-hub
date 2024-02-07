@@ -151,7 +151,7 @@
             <fieldset>
                 <legend>Salas disponíveis</legend>
 
-                <p>Prédio | Sala | Capacidade</p>
+                <p>Prédio | Sala | Capacidade | Recursos </p>
                 {#each data.rooms as room}
                     <div class="form-check">
                         <input
@@ -164,7 +164,7 @@
                             value={room.id}
                         />
                         <label for={room.id.toString()} class="form-check-label">
-                            {room.buildingNumber} | {room.roomNumber} | {room.capacity} |
+                            {room.buildingNumber} | {room.roomNumber} | {room.capacity} | {room.resources}
                         </label>
                     </div>
                 {/each}
