@@ -4,7 +4,7 @@
     import Date from "$lib/components/table/Date.svelte";
     import TimeSpan from "$lib/components/table/TimeSpan.svelte";
     import { readableEntityType } from "$lib/utils";
-    import { Alert } from "@sveltestrap/sveltestrap";
+    import { Alert, Tooltip } from "@sveltestrap/sveltestrap";
 
     export let data;
     export let form;
@@ -41,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each entriesWaitingApproval as entry}
+                {#each entriesWaitingApproval as entry, index}
                     <tr>
                         <td>
                             {entry.userInfo.username}
@@ -49,7 +49,10 @@
                         <Date date={entry.startDate} />
                         <TimeSpan startTime={entry.startDate} endTime={entry.endDate} />
                         <td>
-                            {entry.eventName}
+                            <span id="entry-name-{index}">{entry.eventName}</span>
+                            <Tooltip target="entry-name-{index}">
+                                {entry.eventDescription}
+                            </Tooltip>
                         </td>
                         <td>
                             {entry.roomInfo.buildingNumber} — {entry.roomInfo.roomNumber}
@@ -61,8 +64,7 @@
                             <form method="post" use:enhance>
                                 <input readonly name="id" value={entry.entryMapping.entityId} hidden />
                                 <input readonly name="type" value={entry.entryMapping.type} hidden />
-                                <button class="btn btn-success" type="submit" formaction="?/postApprove">Aprovar</button
-                                >
+                                <button class="btn btn-success" type="submit" formaction="?/postApprove">Aprovar</button>
                                 <button class="btn btn-danger" type="submit" formaction="?/postDelete">Negar</button>
                             </form>
                         </td>
